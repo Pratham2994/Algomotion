@@ -4,14 +4,16 @@ A modern React application built with Vite, featuring Material-UI components, Ta
 
 ## 🚀 Features
 
-- **Modern React 19** with latest features and optimizations
-- **Vite** for fast development and building
-- **Material-UI (MUI)** for beautiful, accessible components
-- **Tailwind CSS** for utility-first styling
-- **Framer Motion** for smooth animations and transitions
-- **React Router** for client-side routing
-- **Recharts** for data visualization
-- **ESLint** for code quality and consistency
+- **Sorting Arena** - Interactive visualization of 6 sorting algorithms (Bubble, Insertion, Selection, Merge, Quick, Heap) with step-by-step animations, customizable speed, and performance metrics
+- **Pathfinding Arena** - Visualize pathfinding algorithms (BFS, DFS, Dijkstra, A*) on dynamic grids with maze generation and open field modes
+- **Complexity Explorer** - Benchmark algorithms across input sizes with Big-O curve overlays and customizable test parameters
+- **Algorithm Library** - Comprehensive reference with pseudocode, complexity analysis, and real-world use cases for each algorithm
+- **Interactive Controls** - Adjustable speed, array sizes, grid dimensions, and algorithm parameters in real-time
+- **Performance Metrics** - Track comparisons, writes, visited nodes, path length, and execution time
+- **Multiple Input Types** - Test algorithms on random, reversed, nearly-sorted, and few-unique data sets
+- **Visual Feedback** - Color-coded animations showing algorithm progress with smooth transitions
+- **Export Capabilities** - Download benchmark results as CSV for further analysis
+- **Responsive Design** - Works seamlessly across desktop and mobile devices
 
 ## 📋 Prerequisites
 
