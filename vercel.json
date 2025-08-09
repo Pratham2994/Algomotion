@@ -4,6 +4,11 @@
   "outputDirectory": "dist",
 
   "routes": [
+    {
+      "src": "^/$",
+      "status": 301,
+      "headers": { "Location": "https://www.algomotion.me" }
+    },
     { "handle": "filesystem" },
     { "src": "/.*", "dest": "/index.html" }
   ],
