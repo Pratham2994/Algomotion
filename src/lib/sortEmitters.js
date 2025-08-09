@@ -473,9 +473,6 @@ export const EMITTERS = {
     label: 'Pancake Sort', bigO: 'O(n²)', fn: pancakeSteps,
     description: 'Sort by prefix “flips”. Great for visualization; not used in practice.'
   },
-
-
-
   tim: {
     label: 'TimSort', bigO: 'O(n log n)', fn: timSteps,
     description: 'Hybrid of runs + insertion and merging. Used by Python/Java’s Arrays.sort for objects.'
