@@ -2,9 +2,7 @@ import { useEffect, useMemo, useRef, useState, startTransition } from 'react'
 import CompHeader from '../components/complexity/CompHeader'
 import CompControls from '../components/complexity/CompControls'
 import CompChart from '../components/complexity/CompChart'
-import {
-  makeArray, median, SORTERS, O_CURVES, COLORS
-} from '../lib/benchCore'
+import { makeArray, median, SORTERS, O_CURVES, COLORS } from '../lib/benchCore'
 
 export default function Complexity() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
@@ -46,23 +44,19 @@ export default function Complexity() {
     const rows = []
     let buffer = []
 
-
-
     for (const n of sizeList) {
       if (abortRef.current.abort) break
-      const BATCH = n > 2000 ? 5 : 1;
-
+      const BATCH = n > 2000 ? 5 : 1
       const row = { n }
-      
 
       for (const key of algos) {
         if (abortRef.current.abort) break
         const fn = SORTERS[key].fn
         const ts = [], cs = [], ws = []
 
-        // dynamic trials: auto-throttle + hard fast-mode when n > 15k
-        const trialsAuto = Math.max(1, Math.round(trials * Math.min(1, 20000 / n)));
-        const trialsForN = n > 10000 ? 2 : trialsAuto;
+        // dynamic trials: auto-throttle + hard fast-mode when n > 10k
+        const trialsAuto = Math.max(1, Math.round(trials * Math.min(1, 20000 / n)))
+        const trialsForN = n > 10000 ? 2 : trialsAuto
 
         const sliceStart = performance.now()
         for (let t = 0; t < trialsForN; t++) {
@@ -72,41 +66,31 @@ export default function Complexity() {
           const dt = performance.now() - t0
           ts.push(dt); cs.push(comparisons); ws.push(writes)
 
-          if (performance.now() - sliceStart > 12) {
-            await new Promise(r => setTimeout(r, 0))
-          }
+          if (performance.now() - sliceStart > 12) await new Promise(r => setTimeout(r, 0))
         }
 
         row[key] = metric === 'runtime' ? median(ts)
           : metric === 'comparisons' ? median(cs)
-            : median(ws)
+          : median(ws)
       }
-
 
       rows.push(row)
       buffer.push(row)
 
-      // flush in batches to reduce renders
       if (buffer.length >= BATCH) {
         const toAppend = buffer; buffer = []
-        startTransition(() => {
-          setData(prev => [...prev, ...toAppend])
-        })
-        await new Promise(r => setTimeout(r, 0)) // let UI breathe
+        startTransition(() => { setData(prev => [...prev, ...toAppend]) })
+        await new Promise(r => setTimeout(r, 0))
       }
     }
 
-    // final flush
     if (buffer.length) {
       const toAppend = buffer
-      startTransition(() => {
-        setData(prev => [...prev, ...toAppend])
-      })
+      startTransition(() => { setData(prev => [...prev, ...toAppend]) })
     }
 
     setRunning(false)
   }
-
 
   const onRun = () => { setData([]); runSweep().catch(() => setRunning(false)) }
   const onPause = () => { abortRef.current.abort = true; setRunning(false) }
@@ -146,9 +130,8 @@ export default function Complexity() {
 
   const metricLabel = metric === 'runtime' ? 'Runtime (ms)'
     : metric === 'comparisons' ? 'Comparisons'
-      : 'Writes'
+    : 'Writes'
 
-  // NEW: sweep progress + “try log scale” hint + compact winner summary
   const totalSizes = sizeList.length
   const progress = useMemo(
     () => (totalSizes ? (data.length / totalSizes) * 100 : 0),
@@ -182,7 +165,7 @@ export default function Complexity() {
   }, [data, algos])
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 p-6">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 px-3 sm:px-4 md:px-6 py-4 sm:py-6">
       <CompHeader />
 
       <CompControls
@@ -200,14 +183,10 @@ export default function Complexity() {
         onRun={onRun} onPause={onPause} onReset={onReset} onExport={onExport}
       />
 
-      {/* sweep progress + gentle hint */}
       {running && totalSizes > 0 && (
         <div className="mt-2">
           <div className="h-1 rounded bg-slate-800 overflow-hidden">
-            <div
-              className="h-1 bg-cyan-400 transition-all"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="h-1 bg-cyan-400 transition-all" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-xs text-slate-500 mt-1">
             Sweeping sizes: {data.length} / {totalSizes}
@@ -230,7 +209,6 @@ export default function Complexity() {
         onRun={onRun}
         onReset={onReset}
       />
-
     </div>
   )
 }
