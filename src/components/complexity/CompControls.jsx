@@ -97,7 +97,7 @@ export default function CompControls(props) {
                                 </Box>
                                 <Box className="flex-[.8]">
                                     <Typography variant="caption" className="text-slate-400">Points</Typography>
-                                    <Slider value={points} min={3} max={12} step={1} onChange={(_, v) => setPoints(v)}
+                                    <Slider value={points} min={3} max={5} step={1} onChange={(_, v) => setPoints(v)}
                                         sx={{ '& .MuiSlider-track': { backgroundColor: '#67e8f9' }, '& .MuiSlider-thumb': { backgroundColor: '#67e8f9' }, '& .MuiSlider-rail': { backgroundColor: '#374151' } }} />
                                 </Box>
                             </Box>
@@ -113,7 +113,7 @@ export default function CompControls(props) {
                             <Box className="flex gap-4">
                                 <Box className="flex-1">
                                     <Typography variant="caption" className="text-slate-400">Trials per size</Typography>
-                                    <Slider value={trials} min={1} max={9} step={1} onChange={(_, v) => setTrials(v)}
+                                    <Slider value={trials} min={1} max={5} step={1} onChange={(_, v) => setTrials(v)}
                                         sx={{ '& .MuiSlider-track': { backgroundColor: '#67e8f9' }, '& .MuiSlider-thumb': { backgroundColor: '#67e8f9' }, '& .MuiSlider-rail': { backgroundColor: '#374151' } }} />
                                     <Typography variant="caption" className="text-slate-500 block mt-1">
                                         More trials = smoother curves; we take the <strong>median</strong>.

@@ -94,7 +94,7 @@ export default function CompChart({
                                     value: 'Input size (n)',
                                     position: 'insideLeft',
                                     dy: 27,
-                                    dx: 40,
+                                    dx: 10,
                                     fill: '#94a3b8'
                                 }}
                             />

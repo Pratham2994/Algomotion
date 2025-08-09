@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, startTransition } from 'react'
 import CompHeader from '../components/complexity/CompHeader'
 import CompControls from '../components/complexity/CompControls'
 import CompChart from '../components/complexity/CompChart'
@@ -11,11 +11,11 @@ export default function Complexity() {
 
   // Controls
   const [algos, setAlgos] = useState(['merge', 'quick', 'heap'])
-  const [metric, setMetric] = useState('runtime')
+  const [metric, setMetric] = useState('comparisons')
   const [generator, setGenerator] = useState('random')
   const [minN, setMinN] = useState(16)
   const [maxN, setMaxN] = useState(2048)
-  const [points, setPoints] = useState(7)
+  const [points, setPoints] = useState(3)
   const [trials, setTrials] = useState(3)
   const [seed, setSeed] = useState(7)
   const [overlays, setOverlays] = useState(['n', 'n log n', 'n²'])
@@ -44,31 +44,69 @@ export default function Complexity() {
   async function runSweep() {
     setRunning(true); abortRef.current.abort = false
     const rows = []
+    let buffer = []
+
+
+
     for (const n of sizeList) {
       if (abortRef.current.abort) break
+      const BATCH = n > 2000 ? 5 : 1;
+
       const row = { n }
+      
+
       for (const key of algos) {
         if (abortRef.current.abort) break
         const fn = SORTERS[key].fn
         const ts = [], cs = [], ws = []
-        for (let t = 0; t < trials; t++) {
+
+        // dynamic trials: auto-throttle + hard fast-mode when n > 15k
+        const trialsAuto = Math.max(1, Math.round(trials * Math.min(1, 20000 / n)));
+        const trialsForN = n > 10000 ? 2 : trialsAuto;
+
+        const sliceStart = performance.now()
+        for (let t = 0; t < trialsForN; t++) {
           const arr = makeArray(n, generator, seed + t * 101 + n * 17)
           const t0 = performance.now()
           const { comparisons, writes } = fn(arr)
           const dt = performance.now() - t0
           ts.push(dt); cs.push(comparisons); ws.push(writes)
-          if ((t & 3) === 0) await new Promise(r => setTimeout(r, 0))
+
+          if (performance.now() - sliceStart > 12) {
+            await new Promise(r => setTimeout(r, 0))
+          }
         }
+
         row[key] = metric === 'runtime' ? median(ts)
           : metric === 'comparisons' ? median(cs)
             : median(ws)
       }
+
+
       rows.push(row)
-      setData(prev => [...prev, row])
-      await new Promise(r => setTimeout(r, 0))
+      buffer.push(row)
+
+      // flush in batches to reduce renders
+      if (buffer.length >= BATCH) {
+        const toAppend = buffer; buffer = []
+        startTransition(() => {
+          setData(prev => [...prev, ...toAppend])
+        })
+        await new Promise(r => setTimeout(r, 0)) // let UI breathe
+      }
     }
+
+    // final flush
+    if (buffer.length) {
+      const toAppend = buffer
+      startTransition(() => {
+        setData(prev => [...prev, ...toAppend])
+      })
+    }
+
     setRunning(false)
   }
+
 
   const onRun = () => { setData([]); runSweep().catch(() => setRunning(false)) }
   const onPause = () => { abortRef.current.abort = true; setRunning(false) }
