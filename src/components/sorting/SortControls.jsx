@@ -67,7 +67,7 @@ import {
                   Speed: {speed}x
                 </Typography>
                 <Slider
-                  value={speed} min={0.25} max={3} step={0.25} onChange={(_, v) => setSpeed(v)}
+                  value={speed} min={0.25} max={5} step={0.25} onChange={(_, v) => setSpeed(v)}
                   size="medium"
                   sx={{
                     '& .MuiSlider-track': { backgroundColor: '#67e8f9' },
