@@ -13,6 +13,9 @@ const getParam = (k, f) => new URLSearchParams(location.search).get(k) ?? f
 function setParams(obj){const sp=new URLSearchParams(location.search);Object.entries(obj).forEach(([k,v])=>sp.set(k,String(v)));history.replaceState(null,'',`?${sp.toString()}`)}
 
 export default function Sorting() {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
   const [algo, setAlgo] = useState(getParam('algo', 'bubble'))
   const [n, setN] = useState(Number(getParam('n', 8)))
   const [speed, setSpeed] = useState(Number(getParam('speed', 1)))

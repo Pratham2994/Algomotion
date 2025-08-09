@@ -8,6 +8,9 @@ import {
 } from '../lib/benchCore'
 
 export default function Complexity(){
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Controls
   const [algos, setAlgos] = useState(['merge','quick','heap'])
   const [metric, setMetric] = useState('runtime')

@@ -16,7 +16,17 @@ export default function AlgoCard({ algo, category }){
         subheader={<span className="text-slate-400">{algo.blurb}</span>}
       />
       <CardContent>
+        {/* Optional properties */}
+        {Array.isArray(algo.props) && algo.props.length > 0 && (
+          <Stack direction="row" spacing={1} className="mb-3 flex-wrap">
+            {algo.props.map((p,i)=>(
+              <Chip key={i} size="small" className="!bg-slate-800 !text-slate-300 !border !border-slate-600" label={p} />
+            ))}
+          </Stack>
+        )}
+
         <Box className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Pseudocode */}
           <Box>
             <div className="text-slate-300 font-medium mb-2">Pseudocode</div>
             <pre className="text-slate-300 bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm overflow-auto">
@@ -24,6 +34,7 @@ export default function AlgoCard({ algo, category }){
             </pre>
           </Box>
 
+          {/* Complexity + uses */}
           <Box>
             <div className="text-slate-300 font-medium mb-2">Complexity</div>
             <Table size="small" className="border border-slate-700 rounded-lg overflow-hidden">

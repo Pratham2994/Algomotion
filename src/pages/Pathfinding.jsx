@@ -8,11 +8,21 @@ import {
   ALGOS, buildMaze, buildOpenGrid, buildWeights,
   DIRS4, DIRS8, makeRng
 } from '../lib/pathCore'
+const getParam = (k, fallback) => new URLSearchParams(location.search).get(k) ?? fallback
+const setParams = (obj) => {
+  const sp = new URLSearchParams(location.search)
+  Object.entries(obj).forEach(([k, v]) => sp.set(k, String(v)))
+  history.replaceState(null, '', `?${sp.toString()}`)
+}
+
 
 export default function Pathfinding(){
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
   const [mode, setMode] = useState('maze')
   const [obst, setObst] = useState(0.0)
-  const [algo, setAlgo] = useState('bfs')
+  const [algo, setAlgo] = useState(getParam('algo', 'bfs'))  
   const [rows, setRows] = useState(21)
   const [cols, setCols] = useState(35)
   const [braid, setBraid] = useState(0.15)
@@ -37,6 +47,7 @@ export default function Pathfinding(){
   const stepsRef = useRef({ list:[], cursor:0, metrics:{ visited:0, pathLen:0, timeMs:0 } })
   const [high, setHigh] = useState({ frontier:new Set(), visit:new Set(), path:new Set() })
   const [metrics, setMetrics] = useState({ visited:0, pathLen:0, timeMs:0 })
+  useEffect(() => { setParams({ algo }) }, [algo])
 
   useEffect(()=>{
     setGrid(gridBase)

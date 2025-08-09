@@ -11,6 +11,9 @@ import AlgoCard from '../components/library/AlgoCard'
 import ComplexityTable from '../components/library/ComplexityTable'
 
 export default function Library(){
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState(0) // 0: All, 1: Sorting, 2: Pathfinding
 
