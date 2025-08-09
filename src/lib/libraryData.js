@@ -164,8 +164,116 @@ export const COMPLEXITY = {
           'Streaming selection where partial order is enough'
         ],
         openLink: '/sorting?algo=heap'
+      },
+      {
+        name: 'Counting Sort', key: 'counting',
+        best: 'O(n + k)', avg: 'O(n + k)', worst: 'O(n + k)', space: 'O(n + k)',
+        blurb: 'Counts occurrences of each key (0..k) and writes out in order; non-comparison, stable variant.',
+        props: ['Stable (with stable write-out)', 'Not in-place', 'Requires small integer key range'],
+        pseudo: [
+          'countingSort(a, k):                 // keys in [0..k]',
+          '  C = array(k+1, 0)',
+          '  for x in a: C[x]++                 // count',
+          '  for i in 1..k: C[i] += C[i-1]     // prefix sums → final positions',
+          '  out = array(len(a))',
+          '  for i = len(a)-1 .. 0:             // reverse for stability',
+          '    out[--C[a[i]]] = a[i]',
+          '  copy out → a'
+        ],
+        uses: [
+          'Sorting small-range integers/IDs',
+          'As a digit pass inside Radix Sort',
+          'Histogram/prefix-sum style pipelines'
+        ],
+        openLink: '/sorting?algo=counting'
+      },
+      {
+        name: 'Radix Sort', key: 'radix',
+        best: 'O((n + k)·d)', avg: 'O((n + k)·d)', worst: 'O((n + k)·d)', space: 'O(n + k)',
+        blurb: 'Sorts by digits from least/most significant using a stable bucket (often counting).',
+        props: ['Stable (with stable digit pass)', 'Non-comparison', 'Requires fixed/base representation'],
+        pseudo: [
+          'radixLSD(a, base):                   // integers',
+          '  d = number_of_digits(max(a), base)',
+          '  for pos = 0 .. d-1:',
+          '    // stable counting/bucket by digit at pos',
+          '    buckets = [[] for 0..base-1]',
+          '    for x in a: buckets[digit(x,pos,base)].push(x)',
+          '    a = concat(buckets...)'
+        ],
+        uses: [
+          'Large integer keys (IDs, timestamps)',
+          'Fixed-length strings/bytes (LSD/MSD variants)',
+          'When comparison sorts hit n log n ceiling'
+        ],
+        openLink: '/sorting?algo=radix'
+      },
+      {
+        name: 'TimSort', key: 'timsort',
+        best: 'O(n)', avg: 'O(n log n)', worst: 'O(n log n)', space: 'O(n)',
+        blurb: 'Hybrid of galloping merge + insertion. Detects natural runs; merges with smart heuristics.',
+        props: ['Stable', 'Run detection', 'Production default (Python/Java objects)'],
+        pseudo: [
+          'timSort(a):',
+          '  runs = find_natural_runs(a)                // monotone stretches',
+          '  for each run < minRun: insertion_extend(run)',
+          '  push runs on a stack; while merging needed:',
+          '    // invariants on run sizes; merge on demand',
+          '    merge_adjacent_runs_with_galloping()'
+        ],
+        uses: [
+          'General-purpose sort for partially ordered data',
+          'Real-world workloads with natural runs',
+          'Language runtimes (Python, Java objects)'
+        ],
+        openLink: '/sorting?algo=tim'
+      },
+      {
+        name: 'IntroSort', key: 'introsort',
+        best: 'O(n log n)', avg: 'O(n log n)', worst: 'O(n log n)', space: 'O(log n)',
+        blurb: 'Starts as quicksort; if recursion gets deep, falls back to heapsort; small parts via insertion.',
+        props: ['Not stable', 'In-place (typical)', 'Used by std::sort'],
+        pseudo: [
+          'introSort(a):',
+          '  depthLimit = 2 * floor(log2(n))',
+          '  intro(a, 0, n-1, depthLimit)',
+          '',
+          'intro(a, lo, hi, depth):',
+          '  if hi - lo < THRESH: insertion(a, lo, hi); return',
+          '  if depth == 0: heapSortRange(a, lo, hi); return',
+          '  p = partition(a, lo, hi)',
+          '  intro(a, lo, p-1, depth-1)',
+          '  intro(a, p+1, hi, depth-1)'
+        ],
+        uses: [
+          'High-performance general-purpose sorting',
+          'Safety against bad quicksort pivots',
+          'Standard libraries (C++ STL std::sort)'
+        ],
+        openLink: '/sorting?algo=intro'
+      },
+      {
+        name: 'Pancake Sort', key: 'pancake',
+        best: 'O(n)', avg: 'O(n²)', worst: 'O(n²)', space: 'O(1)',
+        blurb: 'Sorts by flipping array prefixes so the next largest lands in place.',
+        props: ['In-place', 'Not stable', 'Educational/novel'],
+        pseudo: [
+          'pancakeSort(a):',
+          '  for curr = n-1 down to 1:',
+          '    i = index_of_max(a, 0..curr)',
+          '    flip(a, i)        // bring max to front',
+          '    flip(a, curr)     // move to final position'
+        ],
+        uses: [
+          'Teaching prefix operations',
+          'Showcasing non-standard sorting ideas',
+          'Fun/visual demonstrations'
+        ],
+        openLink: '/sorting?algo=pancake'
       }
+      
     ],
+    
     path: [
       {
         name: 'BFS', key: 'bfs',

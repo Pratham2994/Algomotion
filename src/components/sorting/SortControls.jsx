@@ -40,6 +40,12 @@ import {
                   <MenuItem value="merge">Merge Sort</MenuItem>
                   <MenuItem value="quick">Quick Sort</MenuItem>
                   <MenuItem value="heap">Heap Sort</MenuItem>
+                  <MenuItem value="counting">Counting Sort</MenuItem>
+                  <MenuItem value="radix">Radix Sort</MenuItem>
+                  <MenuItem value="pancake">Pancake Sort</MenuItem>
+                  <MenuItem value="tim">Tim Sort</MenuItem>
+                  <MenuItem value="intro">Intro Sort</MenuItem>
+
                 </Select>
               </FormControl>
             </Grid>
