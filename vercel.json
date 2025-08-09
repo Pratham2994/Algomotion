@@ -1,30 +1,10 @@
 {
-  "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-
-  "routes": [
-    {
-      "src": "^/(.*)$",
-      "has": [{ "type": "host", "value": "algomotion.me" }],
-      "status": 301,
-      "headers": {
-        "Location": "https://www.algomotion.me/$1",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
-      }
-    },
-    { "handle": "filesystem" },
-    { "src": "/.*", "dest": "/index.html" }
-  ],
-
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
-      ]
-    }
-  ]
-}
+    "version": 2,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "routes": [
+      { "handle": "filesystem" },
+      { "src": "/.*", "dest": "/index.html" }
+    ]
+  }
+  
