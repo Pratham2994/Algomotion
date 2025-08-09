@@ -1,4 +1,3 @@
-// src/components/sorting/SortControls.jsx
 import {
     Box, Card, CardContent, CardHeader, Typography,
     Slider, Select, MenuItem, FormControl, InputLabel, Button, ButtonGroup, Grid
@@ -20,8 +19,8 @@ import {
           sx={{ pb: 1 }}
         />
         <CardContent>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={3}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <FormControl fullWidth size="medium">
                 <InputLabel id="algo-label">Algorithm</InputLabel>
                 <Select
@@ -45,14 +44,13 @@ import {
                   <MenuItem value="pancake">Pancake Sort</MenuItem>
                   <MenuItem value="tim">Tim Sort</MenuItem>
                   <MenuItem value="intro">Intro Sort</MenuItem>
-
                 </Select>
               </FormControl>
             </Grid>
   
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Box>
-                <Typography variant="subtitle2" className="text-slate-300 mb-2">
+                <Typography variant="subtitle2" className="text-slate-300 mb-1.5">
                   Array Size: {n}
                 </Typography>
                 <Slider
@@ -67,9 +65,9 @@ import {
               </Box>
             </Grid>
   
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Box>
-                <Typography variant="subtitle2" className="text-slate-300 mb-2">
+                <Typography variant="subtitle2" className="text-slate-300 mb-1.5">
                   Speed: {speed}x
                 </Typography>
                 <Slider
@@ -84,7 +82,7 @@ import {
               </Box>
             </Grid>
   
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <div className="flex flex-col gap-3">
                 <Button
                   variant="outlined"
