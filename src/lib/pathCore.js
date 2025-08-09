@@ -169,10 +169,156 @@ export function aStarSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false
   steps.push({type:'done'})
   return {steps, metrics:{visited, pathLen}}
 }
+export function greedyBestFirstSteps(
+    grid, start, goal,
+    { dirs = DIRS4, rng = null, randomTies = false, weights = null, heuristic = 'manhattan' } = {}
+  ){
+    const rows = grid.length, cols = grid[0].length
+    const inb = (r,c)=>r>=0&&c>=0&&r<rows&&c<cols
+    const h = heuristic==='euclid' ? euclid : heuristic==='octile' ? octile : manhattan
+  
+    const steps = []
+    const parent = {}
+    const inOpen = new Set()
+    const inClosed = new Set()
+  
+    const open = []
+    function push(r,c){
+      const hv = h({r,c}, goal)
+      open.push({r,c,h:hv})
+      inOpen.add(r+','+c)
+    }
+    function popMin(){
+      let idx=0
+      for(let i=1;i<open.length;i++){
+        if(open[i].h<open[idx].h) idx=i
+        else if(open[i].h===open[idx].h && randomTies && rng && rng()<0.5) idx=i
+      }
+      return open.splice(idx,1)[0]
+    }
+  
+    push(start.r, start.c)
+    let visited=0
+    while(open.length){
+      const cur = popMin()
+      const key = cur.r+','+cur.c
+      if(inClosed.has(key)) continue
+      inOpen.delete(key); inClosed.add(key)
+  
+      steps.push({type:'visit', r:cur.r, c:cur.c}); visited++
+      if(cur.r===goal.r && cur.c===goal.c) break
+  
+      const nbrs = randomTies && rng ? shuffled(dirs, rng) : dirs
+      for(const [dr,dc] of nbrs){
+        const nr=cur.r+dr, nc=cur.c+dc, nk=nr+','+nc
+        if(!inb(nr,nc) || grid[nr][nc]===WALL) continue
+        if(inClosed.has(nk)) continue
+        if(!inOpen.has(nk)){
+          parent[nk]={r:cur.r,c:cur.c}
+          steps.push({type:'frontier', r:nr, c:nc})
+          push(nr,nc)
+        }
+      }
+    }
+  
+    // Reconstruct path
+    let pathLen=0
+    let cur={r:goal.r,c:goal.c}
+    while(parent[cur.r+','+cur.c]){
+      steps.push({type:'path', ...cur}); pathLen++
+      cur = parent[cur.r+','+cur.c]
+    }
+    if(cur.r===start.r && cur.c===start.c) steps.push({type:'path', ...start})
+    steps.push({type:'done'})
+    return { steps, metrics:{ visited, pathLen } }
+  }
+  
+  /* =================
+     DIAL'S ALGORITHM
+     =================
+     Works when:
+     - diagonals are OFF (4-way movement)
+     - edge costs are small non-negative integers (your weights 1..3)
+     Otherwise we fallback to Dijkstra.
+  */
+  export function dialsSteps(
+    grid, start, goal,
+    { dirs = DIRS4, rng = null, randomTies = false, weights = null } = {}
+  ){
+    // Guard: no diagonals and integer costs
+    const diagonalUsed = dirs.length > 4
+    const integerWeights = !weights || weights.every(row => row.every(v => v===Infinity || Number.isInteger(v)))
+    if (diagonalUsed || !integerWeights) {
+      // Fallback to standard Dijkstra (handles diagonals / non-integers)
+      return dijkstraSteps(grid, start, goal, { dirs, rng, randomTies, weights })
+    }
+  
+    const rows=grid.length, cols=grid[0].length, inb=(r,c)=>r>=0&&c>=0&&r<rows&&c<cols
+    const w = (r,c)=> (weights ? weights[r][c] : 1) // 4-way only; assumes integer small
+    const steps=[]
+    const parent={}
+    const dist=Array.from({length:rows},()=>Array(cols).fill(Infinity))
+    let visited=0
+  
+    // Max edge weight C
+    const C = weights ?  Math.max(1, ...weights.flat().filter(v=>Number.isFinite(v))) : 1
+    const MAXD = C * rows * cols + 2 // safe upper bound
+    const buckets = Array.from({length: MAXD}, ()=>[]) // index = distance
+    let idx = 0
+    function push(r,c,d){
+      if(d>=MAXD) return
+      buckets[d].push({r,c,d})
+    }
+  
+    dist[start.r][start.c]=0
+    push(start.r, start.c, 0)
+  
+    let found=false
+    while(idx < MAXD){
+      // advance to next non-empty bucket
+      while(idx<MAXD && buckets[idx].length===0) idx++
+      if(idx>=MAXD) break
+  
+      const cur = buckets[idx].shift()
+      if(cur.d!==dist[cur.r][cur.c]) continue // stale
+      steps.push({type:'visit', r:cur.r, c:cur.c}); visited++
+      if(cur.r===goal.r && cur.c===goal.c){ found=true; break }
+  
+      const nbrs = randomTies && rng ? shuffled(dirs, rng) : dirs
+      for(const [dr,dc] of nbrs){
+        const nr=cur.r+dr, nc=cur.c+dc
+        if(!inb(nr,nc) || grid[nr][nc]===WALL) continue
+        const cost = w(nr,nc)
+        if(!Number.isFinite(cost)) continue
+        const nd = cur.d + cost
+        if(nd < dist[nr][nc]){
+          dist[nr][nc]=nd
+          parent[nr+','+nc]={r:cur.r,c:cur.c}
+          steps.push({type:'frontier', r:nr, c:nc})
+          push(nr,nc,nd)
+        }
+      }
+    }
+  
+    // Reconstruct
+    let pathLen=0, cur={r:goal.r,c:goal.c}
+    while(parent[cur.r+','+cur.c]){
+      steps.push({type:'path', ...cur}); pathLen++
+      cur = parent[cur.r+','+cur.c]
+    }
+    if(cur.r===start.r && cur.c===start.c) steps.push({type:'path', ...start})
+    steps.push({type:'done'})
+    return { steps, metrics:{ visited, pathLen } }
+  }
+  
 
-export const ALGOS={
-  bfs:      {label:'BFS',      fn:bfsSteps,      desc:'Breadth-first search on uniform/4-way grid.'},
-  dijkstra: {label:'Dijkstra', fn:dijkstraSteps, desc:'Non-negative weights; optimal with 4/8-way + costs.'},
-  astar:    {label:'A*',       fn:aStarSteps,    desc:'Best-first guided by a heuristic (Manhattan/Euclid/Octile).'},
-  dfs:      {label:'DFS',      fn:dfsSteps,      desc:'Depth-first (not shortest); good for exploring shapes.'},
-}
+
+  export const ALGOS = {
+    bfs:      {label:'BFS',      fn:bfsSteps,      desc:'Breadth-first search on uniform/4-way grid.'},
+    dijkstra: {label:'Dijkstra', fn:dijkstraSteps, desc:'Non-negative weights; optimal with 4/8-way + costs.'},
+    astar:    {label:'A*',       fn:aStarSteps,    desc:'Best-first guided by a heuristic (Manhattan/Euclid/Octile).'},
+    dfs:      {label:'DFS',      fn:dfsSteps,      desc:'Depth-first (not shortest); good for exploring shapes.'},
+    greedy:   {label:'Greedy',   fn:greedyBestFirstSteps, desc:'Greedy best-first (uses only heuristic h, not optimal).'},
+    dials:    {label:"Dial's",   fn:dialsSteps,            desc:"Bucketed Dijkstra for small integer costs (no diagonals)."},
+  }
+  

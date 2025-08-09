@@ -272,7 +272,60 @@ export const COMPLEXITY = {
           'Any weighted shortest path where good heuristics exist'
         ],
         openLink: '/pathfinding?algo=astar'
+      },
+      {
+        name: 'Greedy Best-First', key: 'greedy',
+        best: 'O(E log V)', avg: 'O(E log V)', worst: 'O(E log V)', space: 'O(V)',
+        blurb: 'Best-first search using ONLY the heuristic h(u, t); chases the goal greedily.',
+        props: ['Not optimal in general', 'Very fast when heuristic is informative', 'Complete with a closed/seen set'],
+        pseudo: [
+          'greedy_best_first(G, s, t, h):',
+          '  open = min-heap ordered by h(v,t)',
+          '  push (h(s,t), s); parent = {}; seen = { s }',
+          '  while open not empty:',
+          '    (_, v) = pop_min(open)',
+          '    if v == t: break',
+          '    for u in neighbors(v):',
+          '      if u not in seen:',
+          '        seen.add(u); parent[u] = v',
+          '        push (h(u,t), u) into open',
+          '  // reconstruct path from parent if t reached (may be suboptimal)'
+        ],
+        uses: [
+          'Game AI “chase the target” on large maps (fast, decent routes)',
+          'Routing when an admissible heuristic is available but optimality isn’t required',
+          'As a baseline against A* to show value of g-cost'
+        ],
+        openLink: '/pathfinding?algo=greedy'
+      },
+      {
+        name: "Dial's Algorithm", key: 'dials',
+        best: 'O(V*C + E)', avg: 'O(V*C + E)', worst: 'O(V*C + E)', space: 'O(V + C)',
+        blurb: 'Dijkstra optimized with buckets for small non-negative integer edge weights.',
+        props: ['Exact shortest paths', 'Requires integer weights in [0..C]', 'Often faster than heap Dijkstra when C is small'],
+        pseudo: [
+          "dials(G, s, C):                      // C = max integer edge weight",
+          '  dist[v] = +inf; dist[s] = 0; parent = {}',
+          '  B = array of C+1 empty buckets',
+          '  B[0].push(s); idx = 0',
+          '  while some bucket non-empty:',
+          '    while B[idx % (C+1)] empty: idx++',
+          '    v = B[idx % (C+1)].pop()',
+          '    for (v→u, w) in edges:           // 0 ≤ w ≤ C, integer',
+          '      nd = dist[v] + w',
+          '      if nd < dist[u]:',
+          '        dist[u] = nd; parent[u] = v',
+          '        B[nd % (C+1)].push(u)',
+          '  // parent defines shortest-path tree'
+        ],
+        uses: [
+          'Grids with small cell movement costs (e.g., {1,2,3})',
+          'Road networks with discretized toll/time buckets',
+          'Embedded/real-time systems avoiding heap overhead'
+        ],
+        openLink: '/pathfinding?algo=dials'
       }
+      
     ]
   }
   
