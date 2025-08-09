@@ -20,10 +20,8 @@ export default function App() {
         <Container maxWidth="lg" className="py-8">
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* we’ll add these later */}
             <Route path="/sorting" element={<Sorting />} />
             <Route path="/pathfinding" element={<Pathfinding />} />
-            {/* <Route path="/library" element={<Library />} /> */}
             <Route path="/complexity" element={<Complexity />} />
             <Route path="/library" element={<Library />} />
             <Route path="*" element={<Navigate to="/" replace />} />
