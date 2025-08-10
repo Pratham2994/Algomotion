@@ -42,7 +42,6 @@ export default function MiniArrayDemo() {
         }
       />
       <CardContent>
-        {/* Bars */}
         <div className="flex items-end justify-center gap-2 h-28">
           {f.arr.map((v, idx) => (
             <div
@@ -54,7 +53,6 @@ export default function MiniArrayDemo() {
           ))}
         </div>
 
-        {/* Controls */}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-4">
             <Button size="small" onClick={() => setI((x) => Math.max(0, x - 1))}>Prev</Button>
@@ -67,7 +65,6 @@ export default function MiniArrayDemo() {
           </div>
         </div>
 
-        {/* Legend + hint */}
         <div className="mt-3 flex flex-wrap gap-4 text-xs">
           <Legend color="bg-amber-400" label="comparing pair" />
           <Legend color="bg-red-500" label="swap happened" />

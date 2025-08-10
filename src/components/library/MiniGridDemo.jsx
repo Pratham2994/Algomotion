@@ -69,7 +69,6 @@ export default function MiniGridDemo() {
         }
       />
       <CardContent>
-        {/* Grid */}
         <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${C}, 16px)` }}>
           {Array.from({ length: R }).map((_, r) =>
             Array.from({ length: C }).map((_, c) => (
@@ -86,7 +85,6 @@ export default function MiniGridDemo() {
           )}
         </div>
 
-        {/* Controls + counters */}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-4">
             <Button size="small" onClick={() => setI((x) => Math.max(0, x - 1))}>Prev</Button>
@@ -99,7 +97,6 @@ export default function MiniGridDemo() {
           </div>
         </div>
 
-        {/* Legend + hint */}
         <div className="mt-3 flex flex-wrap gap-4 text-xs">
           <Legend color="bg-emerald-500" label="start" />
           <Legend color="bg-sky-400" label="frontier (distance d)" />

@@ -1,4 +1,3 @@
-// src/components/pathfinding/PathHeader.jsx
 import { Button, Chip, Typography } from '@mui/material'
 
 export default function PathHeader({ current }) {

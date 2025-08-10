@@ -1,11 +1,8 @@
-// src/lib/benchCore.js
 
-/* ========= tiny utils ========= */
 export function mulberry32(seed){let t=seed>>>0;return function(){t+=0x6D2B79F5;let r=Math.imul(t^(t>>>15),1|t);r^=r+Math.imul(r^(r>>>7),61|r);return((r^(r>>>14))>>>0)/4294967296}}
 export function hashSeed(...vals){let h=2166136261;for(const ch of vals.join('|')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 export const median = arr => { if(!arr.length) return 0; const a=[...arr].sort((x,y)=>x-y); const m=(a.length-1)/2; return a.length%2 ? a[m|0] : (a[m|0]+a[(m+1)|0])/2 }
 
-/* ========= array generators ========= */
 export function makeArray(n, kind, seed){
   const rng = mulberry32(hashSeed('arr', n, kind, seed))
   if(kind==='reversed'){
@@ -25,7 +22,6 @@ export function makeArray(n, kind, seed){
   return Array.from({length:n}, ()=>(rng()*100000|0))
 }
 
-/* ========= sorting metrics (headless) ========= */
 export function bubbleMeasure(a0){ const a=a0.slice(); let c=0,w=0
   for(let i=0;i<a.length-1;i++){ for(let j=0;j<a.length-1-i;j++){ c++; if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; w++ } } }
   return {comparisons:c,writes:w}
@@ -81,7 +77,6 @@ export const SORTERS = {
   heap:     {label:'Heap',     fn:heapMeasure,      bigO:'O(n log n)'},
 }
 
-/* ========= Big-O helpers ========= */
 export const O_CURVES = {
   'n': (n)=> n,
   'n log n': (n)=> n * Math.log2(Math.max(2,n)),

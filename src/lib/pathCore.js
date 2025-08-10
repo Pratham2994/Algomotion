@@ -1,11 +1,9 @@
-// src/lib/pathCore.js
-/* ---------- tiny utils ---------- */
+
 export function mulberry32(seed){let t=seed>>>0;return function(){t+=0x6D2B79F5;let r=Math.imul(t^(t>>>15),1|t);r^=r+Math.imul(r^(r>>>7),61|r);return((r^(r>>>14))>>>0)/4294967296}}
 export function hashSeed(...vals){let h=2166136261;for(const ch of vals.join('|')){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 export const makeRng = (seed)=> mulberry32(hashSeed('algo', seed))
 export const shuffled=(arr,rng)=>{const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=(rng()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a}
 
-/* ---------- Grid helpers ---------- */
 export const EMPTY=0, WALL=1
 export const DIRS4=[[1,0],[-1,0],[0,1],[0,-1]]
 export const DIRS8=[...DIRS4,[1,1],[1,-1],[-1,1],[-1,-1]]
@@ -13,7 +11,6 @@ export const manhattan=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)
 export const euclid=(a,b)=>Math.hypot(a.r-b.r,a.c-b.c)
 export const octile=(a,b)=>{const dx=Math.abs(a.c-b.c),dy=Math.abs(a.r-b.r),D=1,D2=Math.SQRT2;return D*(dx+dy)+(D2-2*D)*Math.min(dx,dy)}
 
-/* Open grid (optional random obstacles) */
 export function buildOpenGrid(rows, cols, seed, density=0){
   rows|=1; cols|=1
   const rng=mulberry32(hashSeed('open',seed,rows,cols,density))
@@ -26,7 +23,6 @@ export function buildOpenGrid(rows, cols, seed, density=0){
   return g
 }
 
-/* Maze (recursive backtracker) + braid */
 export function buildMaze(rows, cols, seed, braid=0.15){
   rows|=1; cols|=1
   const rng=mulberry32(hashSeed('maze',seed,rows,cols,braid))
@@ -52,7 +48,6 @@ export function buildMaze(rows, cols, seed, braid=0.15){
   return g
 }
 
-/* Optional weights 1..3 (∞ for walls) */
 export function buildWeights(grid, seed, enabled=false){
   if(!enabled) return null
   const rng=mulberry32(hashSeed('weights',seed))
@@ -62,8 +57,6 @@ export function buildWeights(grid, seed, enabled=false){
   }))
 }
 
-/* ---------- Algorithms: emit step lists ---------- */
-/* Steps: {type:'frontier'|'visit'|'path'|'done', r,c} */
 
 export function bfsSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false,weights=null}={}){
   if(weights||(dirs.length===8)) return dijkstraSteps(grid,start,goal,{dirs,rng,randomTies,weights})
@@ -221,7 +214,6 @@ export function greedyBestFirstSteps(
       }
     }
   
-    // Reconstruct path
     let pathLen=0
     let cur={r:goal.r,c:goal.c}
     while(parent[cur.r+','+cur.c]){
@@ -233,37 +225,27 @@ export function greedyBestFirstSteps(
     return { steps, metrics:{ visited, pathLen } }
   }
   
-  /* =================
-     DIAL'S ALGORITHM
-     =================
-     Works when:
-     - diagonals are OFF (4-way movement)
-     - edge costs are small non-negative integers (your weights 1..3)
-     Otherwise we fallback to Dijkstra.
-  */
+
   export function dialsSteps(
     grid, start, goal,
     { dirs = DIRS4, rng = null, randomTies = false, weights = null } = {}
   ){
-    // Guard: no diagonals and integer costs
     const diagonalUsed = dirs.length > 4
     const integerWeights = !weights || weights.every(row => row.every(v => v===Infinity || Number.isInteger(v)))
     if (diagonalUsed || !integerWeights) {
-      // Fallback to standard Dijkstra (handles diagonals / non-integers)
       return dijkstraSteps(grid, start, goal, { dirs, rng, randomTies, weights })
     }
   
     const rows=grid.length, cols=grid[0].length, inb=(r,c)=>r>=0&&c>=0&&r<rows&&c<cols
-    const w = (r,c)=> (weights ? weights[r][c] : 1) // 4-way only; assumes integer small
+    const w = (r,c)=> (weights ? weights[r][c] : 1) 
     const steps=[]
     const parent={}
     const dist=Array.from({length:rows},()=>Array(cols).fill(Infinity))
     let visited=0
   
-    // Max edge weight C
     const C = weights ?  Math.max(1, ...weights.flat().filter(v=>Number.isFinite(v))) : 1
-    const MAXD = C * rows * cols + 2 // safe upper bound
-    const buckets = Array.from({length: MAXD}, ()=>[]) // index = distance
+    const MAXD = C * rows * cols + 2 
+    const buckets = Array.from({length: MAXD}, ()=>[]) 
     let idx = 0
     function push(r,c,d){
       if(d>=MAXD) return
@@ -275,12 +257,11 @@ export function greedyBestFirstSteps(
   
     let found=false
     while(idx < MAXD){
-      // advance to next non-empty bucket
       while(idx<MAXD && buckets[idx].length===0) idx++
       if(idx>=MAXD) break
   
       const cur = buckets[idx].shift()
-      if(cur.d!==dist[cur.r][cur.c]) continue // stale
+      if(cur.d!==dist[cur.r][cur.c]) continue
       steps.push({type:'visit', r:cur.r, c:cur.c}); visited++
       if(cur.r===goal.r && cur.c===goal.c){ found=true; break }
   
@@ -300,7 +281,6 @@ export function greedyBestFirstSteps(
       }
     }
   
-    // Reconstruct
     let pathLen=0, cur={r:goal.r,c:goal.c}
     while(parent[cur.r+','+cur.c]){
       steps.push({type:'path', ...cur}); pathLen++

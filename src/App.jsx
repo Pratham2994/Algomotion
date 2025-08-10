@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import { ThemeProvider, createTheme, CssBaseline, Container, Box } from '@mui/material'
 import Navbar from './components/Navbar.jsx'
 import Home from './pages/Home.jsx'
@@ -12,6 +13,19 @@ const theme = createTheme({
   shape: { borderRadius: 12 },
 })
 
+function GAListener() {
+  const location = useLocation()
+  useEffect(() => {
+    if (!import.meta.env.PROD) return 
+    if (window.gtag) {
+      window.gtag('config', 'G-G7XR6NHMTX', {
+        page_path: location.pathname + location.search,
+      })
+    }
+  }, [location])
+  return null
+}
+
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -23,6 +37,7 @@ export default function App() {
           className="py-8"
           sx={{ px: { xs: 2, sm: 3, md: 2 } }}
         >
+          <GAListener /> 
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/sorting" element={<Sorting />} />

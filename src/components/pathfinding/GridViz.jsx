@@ -24,7 +24,6 @@ export default function GridViz({
 }) {
   const rows = grid.length, cols = grid[0].length
 
-  // ---- responsive sizing ----
   const wrapRef = useRef(null)
   const [wrapW, setWrapW] = useState(0)
 
@@ -48,12 +47,10 @@ export default function GridViz({
 
   const gap = 2
 
-  // target height: ~60vh on phones, 560 on larger screens
   const targetHeight = typeof window !== 'undefined'
     ? (window.innerWidth < 768 ? Math.max(320, Math.min(560, Math.floor(window.innerHeight * 0.6))) : 560)
     : 560
 
-  // compute cell size by width/height with safe fallbacks
   const byW = Math.floor((Math.max(0, wrapW) - (cols - 1) * gap) / cols)
   const byH = Math.floor((targetHeight - (rows - 1) * gap) / rows)
   const fallbackByW = typeof window !== 'undefined'
@@ -66,7 +63,6 @@ export default function GridViz({
     40
   )
 
-  // content dimensions (for scroll container)
   const contentW = Math.max(0, cols * cellSize + (cols - 1) * gap)
   const contentH = Math.max(0, rows * cellSize + (rows - 1) * gap)
 
@@ -87,7 +83,6 @@ export default function GridViz({
     return 'bg-slate-500/35'
   }
 
-  // drag to move start/goal
   const dragKindRef = useRef(null)
   const inb = (r, c) => r >= 1 && c >= 1 && r < rows - 1 && c < cols - 1
   const canPlace = (r, c) =>
@@ -179,17 +174,15 @@ export default function GridViz({
           </Alert>
         )}
 
-        {/* SCROLL CONTAINER */}
         <div
           ref={wrapRef}
           className="rounded-lg border border-slate-700 bg-slate-900 w-full"
           style={{
-            overflow: 'auto',                   // <-- enables horizontal/vertical scroll
+            overflow: 'auto',                   
             padding: 12,
-            maxHeight: targetHeight + 24,       // include padding
+            maxHeight: targetHeight + 24,      
           }}
         >
-          {/* content sized to its intrinsic grid width/height */}
           <div
             className="grid"
             style={{
@@ -219,7 +212,6 @@ export default function GridViz({
           </div>
         </div>
 
-        {/* legend */}
         <div className="mt-4 sm:mt-5 flex flex-wrap gap-3 sm:gap-4 text-sm">
           <Legend swatch="bg-slate-900" label="Wall" />
           <Legend swatch="bg-slate-500/35" label="Empty (tinted by weight)" />

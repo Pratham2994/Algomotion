@@ -1,4 +1,3 @@
-// src/components/pathfinding/PathMetrics.jsx
 import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material'
 
 export default function PathMetrics({ metrics, rows, cols, fmtMs }) {

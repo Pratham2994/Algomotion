@@ -1,4 +1,3 @@
-// src/components/complexity/CompControls.jsx
 import {
     Card, CardHeader, CardContent, Typography, Grid, Box,
     FormControl, InputLabel, Select, MenuItem, Button, Slider, Checkbox, ListItemText
@@ -25,7 +24,6 @@ import {
         <CardHeader title={<Typography variant="h6" className="!font-semibold">Controls</Typography>} sx={{ pb: 1 }} />
         <CardContent>
           <Grid container spacing={3}>
-            {/* Algorithms multi-select */}
             <Grid size={{ xs: 12, md: 4 }}>
               <FormControl fullWidth size="medium">
                 <InputLabel id="algos">Algorithms</InputLabel>
@@ -45,7 +43,6 @@ import {
               </FormControl>
             </Grid>
   
-            {/* Metric */}
             <Grid size={{ xs: 6, md: 2 }}>
               <FormControl fullWidth size="medium">
                 <InputLabel id="metric">Metric</InputLabel>
@@ -61,7 +58,6 @@ import {
               </FormControl>
             </Grid>
   
-            {/* Generator */}
             <Grid size={{ xs: 6, md: 2 }}>
               <FormControl fullWidth size="medium">
                 <InputLabel id="gen">Input</InputLabel>
@@ -78,7 +74,6 @@ import {
               </FormControl>
             </Grid>
   
-            {/* Size range */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Box>
                 <Typography variant="subtitle2" className="text-slate-300 mb-2">
@@ -104,7 +99,6 @@ import {
               </Box>
             </Grid>
   
-            {/* Trials & seed */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Box>
                 <Typography variant="subtitle2" className="text-slate-300 mb-2">
@@ -131,7 +125,6 @@ import {
               </Box>
             </Grid>
   
-            {/* Overlays + scale */}
             <Grid size={{ xs: 12, md: 4 }}>
               <FormControl fullWidth size="medium">
                 <InputLabel id="ov">Big-O Overlays</InputLabel>
@@ -163,7 +156,6 @@ import {
               </Box>
             </Grid>
   
-            {/* Actions */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Box className="flex flex-col sm:flex-row gap-3 sm:justify-end">
                 {!running ? (
@@ -205,7 +197,6 @@ import {
             </Grid>
           </Grid>
   
-          {/* Mini explainer */}
           <Box
             className="mt-4"
             sx={{

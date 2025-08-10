@@ -1,4 +1,3 @@
-// src/components/complexity/CompHeader.jsx
 import { Chip, Typography } from '@mui/material'
 
 export default function CompHeader(){

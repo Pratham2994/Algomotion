@@ -1,5 +1,3 @@
-// src/lib/sortEmitters.js
-/* Steps: {type:'compare', i,j} | {type:'swap', i,j} | {type:'overwrite', i, value} | {type:'placed', i} */
 
 function bubbleSteps(a0) {
   const a = a0.slice(), steps = []
@@ -142,7 +140,6 @@ function mergeSteps(a0) {
   for (let i = 0; i < n; i++) steps.push({ type: 'placed', i })
   return { steps, metrics: { comparisons, writes } }
 }
-/* =============== Helpers reused by multiple emitters =============== */
 function swapIn(a, i, j, steps, metrics) {
   if (i === j) return;
   [a[i], a[j]] = [a[j], a[i]];
@@ -151,7 +148,6 @@ function swapIn(a, i, j, steps, metrics) {
 }
 
 function binarySearchPos(a, lo, hi, key, steps, metrics) {
-  // returns first index in [lo, hi] where key <= a[idx]
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
     metrics.comparisons++; steps.push({ type: 'compare', i: mid, j: -1 });
@@ -161,7 +157,6 @@ function binarySearchPos(a, lo, hi, key, steps, metrics) {
   return lo;
 }
 
-/* ======================= Counting Sort (integers) ======================= */
 function countingSteps(a0) {
   const a = a0.slice(), steps = [];
   const metrics = { comparisons: 0, writes: 0 };
@@ -171,14 +166,11 @@ function countingSteps(a0) {
   let min = a[0], max = a[0];
   for (const v of a) { if (v < min) min = v; if (v > max) max = v; }
   const range = max - min + 1;
-  // protect against huge ranges to avoid memory blow-ups
   if (range > 4096) {
-    // fallback to insertion (stable) to keep perf sane
     return insertionSteps(a0);
   }
   const count = new Array(range).fill(0);
   for (const v of a) { count[v - min]++; }
-  // prefix sums (stable)
   for (let i = 1; i < range; i++) count[i] += count[i - 1];
   const out = new Array(a.length);
   for (let i = a.length - 1; i >= 0; i--) {
@@ -195,12 +187,10 @@ function countingSteps(a0) {
   return { steps, metrics };
 }
 
-/* ======================= Radix Sort (LSD base 10) ======================= */
 function radixSteps(a0) {
   const a = a0.slice(), steps = [];
   const metrics = { comparisons: 0, writes: 0 };
   if (a.length === 0) return { steps, metrics };
-  // Only handle non-negative integers cleanly. If not, fallback:
   if (a.some(v => v < 0 || !Number.isInteger(v))) {
     return countingSteps(a0);
   }
@@ -231,14 +221,12 @@ function radixSteps(a0) {
   return { steps, metrics };
 }
 
-/* ============================ Pancake Sort ============================= */
 function pancakeSteps(a0) {
   const a = a0.slice(), steps = [];
   const metrics = { comparisons: 0, writes: 0 };
   const n = a.length;
 
   function flip(k) {
-    // reverse a[0..k]
     let i = 0, j = k;
     while (i < j) {
       swapIn(a, i, j, steps, metrics);
@@ -247,7 +235,6 @@ function pancakeSteps(a0) {
   }
 
   for (let curr = n - 1; curr > 0; curr--) {
-    // find index of max in [0..curr]
     let mi = 0;
     for (let i = 1; i <= curr; i++) {
       metrics.comparisons++; steps.push({ type: 'compare', i, j: mi });
@@ -261,11 +248,7 @@ function pancakeSteps(a0) {
   return { steps, metrics };
 }
 
-/* ============================== TimSort =============================== */
-/* Simplified TimSort:
-   - identify natural runs (ascending; reverse descending)
-   - extend short runs with insertion sort up to RUN
-   - iteratively merge runs (no galloping) */
+
 function timSteps(a0) {
   const a = a0.slice(), steps = [];
   const metrics = { comparisons: 0, writes: 0 };
@@ -283,16 +266,15 @@ function timSteps(a0) {
   function countRun(lo) {
     let hi = lo + 1;
     if (hi >= n) return lo + 1;
-    // detect ascending / descending
     metrics.comparisons++; steps.push({ type: 'compare', i: lo, j: hi });
-    if (a[hi] < a[lo]) { // descending
+    if (a[hi] < a[lo]) { 
       while (hi < n) {
         metrics.comparisons++; steps.push({ type: 'compare', i: hi - 1, j: hi });
         if (!(a[hi] < a[hi - 1])) break;
         hi++;
       }
       reverse(lo, hi - 1);
-    } else { // ascending
+    } else { 
       while (hi < n) {
         metrics.comparisons++; steps.push({ type: 'compare', i: hi - 1, j: hi });
         if (!(a[hi] >= a[hi - 1])) break;
@@ -306,7 +288,6 @@ function timSteps(a0) {
     for (let i = lo + 1; i <= hi; i++) {
       const key = a[i];
       let pos = binarySearchPos(a, lo, i - 1, key, steps, metrics);
-      // shift right [pos..i-1]
       for (let j = i; j > pos; j--) {
         pushOverwrite(j, a[j - 1]);
       }
@@ -315,7 +296,6 @@ function timSteps(a0) {
   }
 
   function merge(lo, mid, hi) {
-    // standard merge (stable)
     const L = a.slice(lo, mid + 1);
     const R = a.slice(mid + 1, hi + 1);
     let i = 0, j = 0, k = lo;
@@ -328,17 +308,14 @@ function timSteps(a0) {
     while (j < R.length) { pushOverwrite(k++, R[j++]); }
   }
 
-  // 1) Identify and fix runs
   for (let i = 0; i < n;) {
-    let runEnd = countRun(i);           // [i .. runEnd-1]
+    let runEnd = countRun(i);           
     const runLen = runEnd - i;
     const targetEnd = Math.min(i + Math.max(RUN, runLen) - 1, n - 1);
-    // extend via insertion to at least RUN
     insertionRun(i, targetEnd);
     i = targetEnd + 1;
   }
 
-  // 2) Merge like bottom-up mergesort with run size doubling
   for (let size = RUN; size < n; size <<= 1) {
     for (let lo = 0; lo < n; lo += (size << 1)) {
       const mid = Math.min(lo + size - 1, n - 1);
@@ -351,8 +328,7 @@ function timSteps(a0) {
   return { steps, metrics };
 }
 
-/* ============================== IntroSort ============================== */
-/* Quicksort + depth limit → HeapSort, with insertion for tiny parts */
+
 function introSteps(a0) {
   const a = a0.slice(), steps = [];
   const metrics = { comparisons: 0, writes: 0 };
@@ -380,7 +356,6 @@ function introSteps(a0) {
         const l = 2 * i + 1, r = 2 * i + 2;
         if (l >= size) break;
         let big = l;
-        // compare mapped indices
         metrics.comparisons++; steps.push({ type: 'compare', i: lo + l, j: lo + r < lo + size ? lo + r : lo + l });
         if (r < size && a[lo + r] > a[lo + l]) big = r;
         metrics.comparisons++; steps.push({ type: 'compare', i: lo + i, j: lo + big });
@@ -396,7 +371,6 @@ function introSteps(a0) {
     heapify(lo, hi);
     for (let end = hi; end > lo; end--) {
       swapIn(a, lo, end, steps, metrics);
-      // sift with smaller heap size
       const size = end - lo;
       function sift(i) {
         while (true) {
@@ -435,7 +409,6 @@ function introSteps(a0) {
       if (len <= INSERT_CUTOFF) { insertion(lo, hi); return; }
       if (depthLeft === 0) { heapSort(lo, hi); return; }
       const p = partition(lo, hi);
-      // tail-call elimination style
       if (p - 1 - lo < hi - (p + 1)) {
         sort(lo, p - 1, depthLeft - 1);
         lo = p + 1;

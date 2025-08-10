@@ -1,4 +1,3 @@
-// src/pages/Pathfinding.jsx
 import { useEffect, useMemo, useRef, useState } from 'react'
 import GridViz from '../components/pathfinding/GridViz'
 import PathHeader from '../components/pathfinding/PathHeader'

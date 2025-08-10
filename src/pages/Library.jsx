@@ -14,7 +14,7 @@ export default function Library() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const [search, setSearch] = useState('')
-  const [tab, setTab] = useState(0) // 0: All, 1: Sorting, 2: Pathfinding
+  const [tab, setTab] = useState(0) 
 
   const algorithms = useMemo(() => ([
     ...COMPLEXITY.sorting.map(a => ({ ...a, _cat: 'sorting' })),

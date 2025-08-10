@@ -115,7 +115,6 @@ function FeatureCard({ icon, title, subtitle, bullets, to, cta }) {
             sx={{ pb: 0.5 }}
           />
           <CardContent>
-            {/* stack on small, row on md+ */}
             <Box className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
               <Box className="flex-1">
                 <ul className="list-disc list-inside text-slate-200/90 space-y-1.5">
@@ -139,7 +138,7 @@ function FeatureCard({ icon, title, subtitle, bullets, to, cta }) {
         to={to}
         aria-label={ariaLabel}
         size="medium"
-        fullWidth               // ✅ full-width on small, constrained by parent on md+
+        fullWidth               
         endIcon={<ChevronRightIcon sx={{ fontSize: 18 }} />}
         sx={{
           borderRadius: 9999, px: 2.8, py: 1.1, textTransform: 'none', fontWeight: 800, letterSpacing: 0.2,

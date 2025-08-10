@@ -1,4 +1,3 @@
-// SortHeader.jsx
 import { Button, Chip, Typography } from '@mui/material'
 
 export default function SortHeader({ currentAlgo }) {

@@ -36,7 +36,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // close drawer on route change
   useEffect(() => { setOpen(false) }, [location.pathname])
 
   return (
@@ -51,7 +50,6 @@ export default function Navbar() {
       }}
     >
       <Toolbar className="max-w-6xl w-full mx-auto gap-2">
-        {/* Brand */}
         <Box className="flex items-center gap-2">
           <Link to="/" aria-label="Algomotion home" className="flex items-center gap-2">
             <InsightsIcon sx={{ color: '#67e8f9' }} />
@@ -61,7 +59,6 @@ export default function Navbar() {
 
         <Box className="flex-1" />
 
-        {/* Desktop links (unchanged) */}
         <Box className="hidden md:flex items-center gap-1">
           {NAV.map(({ to, label, end }) => (
             <NavLink
@@ -75,7 +72,6 @@ export default function Navbar() {
           ))}
         </Box>
 
-        {/* Mobile hamburger */}
         <Box className="md:hidden">
           <IconButton
             aria-label="Open navigation"
@@ -87,7 +83,6 @@ export default function Navbar() {
         </Box>
       </Toolbar>
 
-      {/* Mobile Drawer */}
       <Drawer
         anchor="right"
         open={open}

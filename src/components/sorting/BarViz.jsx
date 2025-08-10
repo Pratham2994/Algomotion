@@ -5,11 +5,7 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded'
 import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded'
 import { useEffect, useRef, useState, useMemo } from 'react'
 
-/**
- * Props (unchanged):
- * - array, highlights, placedSet
- * - running, onRun, onPause, onStep, onReset
- */
+
 export default function BarViz({
   array, highlights, placedSet,
   running, onRun, onPause, onStep, onReset
@@ -32,7 +28,6 @@ export default function BarViz({
     return () => ro.disconnect()
   }, [])
 
-  // spacing tuned for 5..100 elements
   const gap = useMemo(() => (n >= 90 ? 2 : n >= 70 ? 3 : n >= 50 ? 4 : n >= 30 ? 6 : 8), [n])
   const maxBarW = 42
   const minBarW = 4
@@ -44,12 +39,10 @@ export default function BarViz({
     return Math.max(minBarW, Math.min(maxBarW, raw || minBarW))
   }, [wrapW, n, gap])
 
-  // labels: target ~28 captions across width
   const MAX_LABELS = 28
   const labelStride = useMemo(() => Math.max(1, Math.ceil(n / MAX_LABELS)), [n])
   const SHOW_TEXT_MIN_PX = 26
 
-  // responsive chart height (~60vh on phones, 500 on md+)
   const chartHeight = useMemo(() => {
     if (typeof window === 'undefined') return 500
     const w = window.innerWidth
@@ -90,7 +83,7 @@ export default function BarViz({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     height: 32,
-    lineHeight: '32px', // prevent digit descender clipping
+    lineHeight: '32px', 
     fontSize: n >= 90 ? '10px' : n >= 70 ? '11px' : '12px'
   }), [barWidth, n])
 

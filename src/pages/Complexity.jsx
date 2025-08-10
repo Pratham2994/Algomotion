@@ -7,7 +7,6 @@ import { makeArray, median, SORTERS, O_CURVES, COLORS } from '../lib/benchCore'
 export default function Complexity() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  // Controls
   const [algos, setAlgos] = useState(['merge', 'quick', 'heap'])
   const [metric, setMetric] = useState('comparisons')
   const [generator, setGenerator] = useState('random')
@@ -19,7 +18,6 @@ export default function Complexity() {
   const [overlays, setOverlays] = useState(['n', 'n log n', 'n²'])
   const [logScale, setLogScale] = useState(true)
 
-  // Run state
   const [running, setRunning] = useState(false)
   const [data, setData] = useState([])
   const abortRef = useRef({ abort: false })
@@ -54,7 +52,6 @@ export default function Complexity() {
         const fn = SORTERS[key].fn
         const ts = [], cs = [], ws = []
 
-        // dynamic trials: auto-throttle + hard fast-mode when n > 10k
         const trialsAuto = Math.max(1, Math.round(trials * Math.min(1, 20000 / n)))
         const trialsForN = n > 10000 ? 2 : trialsAuto
 

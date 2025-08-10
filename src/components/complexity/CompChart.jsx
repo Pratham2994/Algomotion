@@ -1,4 +1,3 @@
-// src/components/complexity/CompChart.jsx
 import { Card, CardHeader, CardContent, Typography, Box, IconButton, Tooltip as MTooltip } from '@mui/material'
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded'
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded'
