@@ -38,7 +38,7 @@ export default function ComplexityTable({ rows }) {
         </div>
         <Divider className="my-4 border-slate-700" />
         <Typography variant="body2" className="text-slate-400">
-          Tip: asymptotic notation describes <strong>growth</strong>, not constant factors. Your Complexity Explorer page
+          Tip: asymptotic notation describes <strong>growth</strong>, not constant factors. The Complexity Explorer page
           measures real runtimes and overlays these shapes to connect theory with practice.
         </Typography>
       </CardContent>
