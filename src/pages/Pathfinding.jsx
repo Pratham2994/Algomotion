@@ -21,13 +21,13 @@ export default function Pathfinding() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const [mode, setMode] = useState(getParam('mode', 'maze'))
-  const [obst, setObst] = useState(parseFloat(getParamRaw('obst')) || 0.0)
+  const [obst, setObst] = useState(Math.min(Math.max(parseFloat(getParamRaw('obst')) || 0.0, 0), 1))
   const [algo, setAlgo] = useState(getParam('algo', 'bfs'))
-  const [rows, setRows] = useState(parseInt(getParamRaw('rows') || '21', 10))
-  const [cols, setCols] = useState(parseInt(getParamRaw('cols') || '35', 10))
-  const [braid, setBraid] = useState(parseFloat(getParamRaw('braid')) || 0.15)
+  const [rows, setRows] = useState(Math.min(Math.max(parseInt(getParamRaw('rows') || '21', 10), 5), 50))
+  const [cols, setCols] = useState(Math.min(Math.max(parseInt(getParamRaw('cols') || '35', 10), 5), 50))
+  const [braid, setBraid] = useState(Math.min(Math.max(parseFloat(getParamRaw('braid')) || 0.15, 0), 1))
   const [seed, setSeed] = useState(parseInt(getParamRaw('seed') || '7', 10))
-  const [speed, setSpeed] = useState(parseFloat(getParamRaw('speed') || '1'))
+  const [speed, setSpeed] = useState(Math.min(Math.max(parseFloat(getParamRaw('speed') || '1'), 0.1), 5))
 
   const [diagonals, setDiagonals] = useState((getParamRaw('diag') ?? '0') === '1')
   const [weighted, setWeighted] = useState((getParamRaw('w') ?? '0') === '1')
@@ -41,12 +41,12 @@ export default function Pathfinding() {
 
   const [grid, setGrid] = useState(maze)
   const [start, setStart] = useState({
-    r: parseInt(getParamRaw('sr') ?? '1', 10),
-    c: parseInt(getParamRaw('sc') ?? '1', 10)
+    r: Math.min(Math.max(parseInt(getParamRaw('sr') ?? '1', 10), 1), rows - 2),
+    c: Math.min(Math.max(parseInt(getParamRaw('sc') ?? '1', 10), 1), cols - 2)
   })
   const [goal, setGoal] = useState({
-    r: parseInt(getParamRaw('gr') ?? String(rows - 2), 10),
-    c: parseInt(getParamRaw('gc') ?? String(cols - 2), 10)
+    r: Math.min(Math.max(parseInt(getParamRaw('gr') ?? String(rows - 2), 10), 1), rows - 2),
+    c: Math.min(Math.max(parseInt(getParamRaw('gc') ?? String(cols - 2), 10), 1), cols - 2)
   })
 
   const [running, setRunning] = useState(false)

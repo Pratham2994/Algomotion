@@ -15,9 +15,9 @@ export default function Sorting() {
         window.scrollTo(0, 0);
     }, []);
     const [algo, setAlgo] = useState(getParam('algo', 'bubble'))
-    const [n, setN] = useState(Number(getParam('n', 8)))
-    const [speed, setSpeed] = useState(Number(getParam('speed', 1)))
-    const [seed, setSeed] = useState(Number(getParam('seed', 7)))
+    const [n, setN] = useState(Math.min(Math.max(Number(getParam('n', 8)), 5), 100))
+    const [speed, setSpeed] = useState(Math.min(Math.max(Number(getParam('speed', 1)), 0.1), 5))
+    const [seed, setSeed] = useState(Math.max(Number(getParam('seed', 7)), 1))
 
     const baseArray = useMemo(() => {
         const rng = mulberry32(hashSeed('arr', seed, n))

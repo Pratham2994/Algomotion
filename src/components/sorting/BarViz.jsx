@@ -69,10 +69,10 @@ export default function BarViz({
       width: `${barWidth}px`,
       height: `${hPct}%`,
       minHeight: '6px',
-      transform: emphasized ? 'translateZ(0) scale(1.08)' : 'translateZ(0)',
-      boxShadow: emphasized ? '0 0 14px rgba(255,255,255,0.35)' : 'none',
+      transform: emphasized ? 'translateZ(0) scale(1.15)' : 'translateZ(0)',
+      boxShadow: emphasized ? '0 0 20px rgba(255,255,255,0.5)' : 'none',
       zIndex: emphasized ? 10 : 'auto',
-      transition: 'height 200ms ease, transform 160ms ease, box-shadow 160ms ease',
+      transition: 'height 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1)',
       willChange: 'height, transform',
     }
   }

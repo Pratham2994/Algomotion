@@ -198,9 +198,15 @@ export default function GridViz({
               return (
                 <div
                   key={`${r}-${c}`}
-                  className={`rounded ${colorFor(r, c)} transition-colors duration-150`}
+                  className={`rounded ${colorFor(r, c)} transition-colors duration-300 ease-in-out transform hover:scale-105`}
                   title={`(${r}, ${c})`}
-                  style={{ width: cellSize, height: cellSize, cursor: isHandle ? 'grab' : 'default' }}
+                  style={{
+                    width: cellSize,
+                    height: cellSize,
+                    cursor: isHandle ? 'grab' : 'default',
+                    transition: 'transform 300ms ease-in-out, box-shadow 300ms ease-in-out',
+                    boxShadow: highlights.path.has(`${r},${c}`) ? '0 0 10px rgba(255, 255, 0, 0.8)' : 'none',
+                  }}
                   data-rc={`${r},${c}`}
                   onPointerDown={(e) => {
                     if (r === start.r && c === start.c) beginDrag('start', e)
