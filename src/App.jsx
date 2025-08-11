@@ -7,7 +7,7 @@ import Sorting from './pages/Sorting.jsx'
 import Pathfinding from './pages/Pathfinding.jsx'
 import Complexity from './pages/Complexity.jsx'
 import Library from './pages/Library.jsx'
-
+import Footer from './components/Footer.jsx'
 const theme = createTheme({
   palette: { mode: 'dark' },
   shape: { borderRadius: 12 },
@@ -47,6 +47,8 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Container>
+        <div id="footer-sentinel" style={{ height: 1 }} />
+        <Footer />
       </Box>
     </ThemeProvider>
   )
