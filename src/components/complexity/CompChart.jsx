@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardContent, Typography, Box, IconButton, Tooltip as MTooltip } from '@mui/material'
+import { Card, CardHeader, CardContent, Typography, Box, IconButton, Tooltip as MTooltip, useMediaQuery, useTheme } from '@mui/material'
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded'
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded'
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip as RTooltip, Legend,
-  CartesianGrid, ResponsiveContainer, ReferenceLine
+  LineChart, Line, XAxis, YAxis, Tooltip as RTooltip,
+  CartesianGrid, ResponsiveContainer, ReferenceLine, Legend
 } from 'recharts'
 import { SORTERS, COLORS } from '../../lib/benchCore'
 
@@ -40,6 +40,9 @@ export default function CompChart({
   data, algos, overlaySeries, yDomain, metricLabel, logScale,
   onRun, onReset
 }) {
+  const theme = useTheme()
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+
   return (
     <Card variant="outlined" sx={{ borderColor: '#1f2937', background: '#0a1220' }}>
       <CardHeader
@@ -63,25 +66,70 @@ export default function CompChart({
         }
       />
       <CardContent>
-        <Box sx={{ height: { xs: 320, sm: 380, md: 440 } }}>
+
+        {isXs && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.25, mb: 1 }}>
+            {algos.map(a => (
+              <Box key={a} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Box sx={{ width: 10, height: 10, bgcolor: COLORS[a], borderRadius: '2px' }} />
+                <Typography variant="caption" sx={{ color: '#cbd5e1' }}>{SORTERS[a].label}</Typography>
+              </Box>
+            ))}
+            {overlaySeries.map(s => (
+              <Typography key={s.name} variant="caption" sx={{ color: '#cbd5e1' }}>
+                O({s.name})
+              </Typography>
+            ))}
+          </Box>
+        )}
+
+        <Box sx={{ height: { xs: 440, sm: 380, md: 440 }, pb: isXs ? 4 : 0 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 24 }}>
+            <LineChart
+              data={data}
+              margin={{
+                top: isXs ? 8 : 12, 
+                right: 20,
+                left: 0,
+                bottom: 0
+              }}
+            >
               <CartesianGrid stroke="#1f2937" />
+
+              {!isXs && (
+                <Legend
+                  verticalAlign="top"
+                  align="right"
+                  height={28}
+                  wrapperStyle={{ color: '#cbd5e1' }}
+                />
+              )}
+
               <XAxis
                 dataKey="n"
-                tick={{ fill: '#94a3b8' }}
                 type="number"
                 domain={['dataMin', 'dataMax']}
-                label={{ value: 'Input size (n)', position: 'insideLeft', dy: 27, dx: 10, fill: '#94a3b8' }}
+                tick={{ fill: '#94a3b8', fontSize: isXs ? 11 : 12 }}
+                tickMargin={8}
+                minTickGap={10}
+                height={isXs ? 40 : 46}
+                label={
+                  isXs
+                    ? undefined
+                    : { value: 'Input size (n)', position: 'insideBottom', dy: 18, fill: '#94a3b8' }
+                }
+                interval="preserveStartEnd"
               />
+
               <YAxis
                 tick={{ fill: '#94a3b8' }}
                 domain={yDomain}
                 scale={logScale ? 'log' : 'linear'}
                 allowDataOverflow
               />
+
               <RTooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ color: '#cbd5e1' }} />
+
               {algos.map(a => (
                 <Line
                   key={a}
@@ -93,6 +141,7 @@ export default function CompChart({
                   strokeWidth={2}
                 />
               ))}
+
               {overlaySeries.map(s => (
                 <Line
                   key={s.name}
@@ -105,10 +154,18 @@ export default function CompChart({
                   strokeWidth={1.5}
                 />
               ))}
+
               <ReferenceLine y={0} stroke="#1f2937" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
+
+        {isXs && (
+          <Typography variant="body2" align="center" sx={{ mt: 1, mb: 2, color: '#94a3b8' }}>
+            Input size (n)
+          </Typography>
+        )}
+
         <Typography variant="body2" className="text-slate-400 mt-3">
           Overlays are scaled to the first measured point to compare <em>shape</em>, not raw value.
         </Typography>
