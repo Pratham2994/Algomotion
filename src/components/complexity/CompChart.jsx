@@ -8,8 +8,23 @@ import {
 import { SORTERS, COLORS } from '../../lib/benchCore'
 
 const orderMap = { 'O(n²)': 1, 'O(n log n)': 2, 'O(n)': 3 }
-
+const formatCompact = (n) => {
+    if (n == null) return ''
+    const abs = Math.abs(n)
+    if (abs < 1000) return `${n}`
+    const units = ['k', 'M', 'B', 'T']
+    let u = -1
+    let num = n
+    while (Math.abs(num) >= 1000 && u < units.length - 1) {
+      num /= 1000
+      u++
+    }
+    const dec = Math.abs(num) < 10 ? 1 : 0 
+    return `${parseFloat(num.toFixed(dec))}${units[u]}`
+  }
 function CustomTooltip({ active, payload, label }) {
+
+
   if (!active || !payload || !payload.length) return null
   const withIndex = payload.map((p, idx) => ({ ...p, _idx: idx }))
   const sorted = withIndex.sort((a, b) => {
@@ -29,7 +44,7 @@ function CustomTooltip({ active, payload, label }) {
       {sorted.map((entry, i) => (
         <div key={i} style={{ margin: '2px 0' }}>
           <span style={{ color: entry.color, fontWeight: 600 }}>{entry.name}</span>
-          <span> : {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}</span>
+          <span> : {typeof entry.value === 'number' ? formatCompact(entry.value) : entry.value}</span>
         </div>
       ))}
     </div>
@@ -40,6 +55,7 @@ export default function CompChart({
   data, algos, overlaySeries, yDomain, metricLabel, logScale,
   onRun, onReset
 }) {
+
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -88,10 +104,10 @@ export default function CompChart({
             <LineChart
               data={data}
               margin={{
-                top: isXs ? 8 : 12, 
+                top: isXs ? 8 : 12,
                 right: 20,
-                left: 0,
-                bottom: 0
+                left: isXs ? 12 : 18,         
+                bottom: isXs ? 0 : 28          
               }}
             >
               <CartesianGrid stroke="#1f2937" />
@@ -112,22 +128,31 @@ export default function CompChart({
                 tick={{ fill: '#94a3b8', fontSize: isXs ? 11 : 12 }}
                 tickMargin={8}
                 minTickGap={10}
-                height={isXs ? 40 : 46}
+                height={isXs ? 40 : 48}
+
                 label={
                   isXs
                     ? undefined
-                    : { value: 'Input size (n)', position: 'insideBottom', dy: 18, fill: '#94a3b8' }
+                    : {
+                      value: 'Input size (n)',
+                      position: 'inside',
+                      dy: 22,    
+                      dx: 8,     
+                      fill: '#94a3b8'
+                    }
                 }
                 interval="preserveStartEnd"
               />
 
               <YAxis
-                tick={{ fill: '#94a3b8' }}
+                tick={{ fill: '#94a3b8', fontSize: isXs ? 11 : 12 }}
                 domain={yDomain}
                 scale={logScale ? 'log' : 'linear'}
                 allowDataOverflow
+                width={isXs ? 42 : 56}     
+                tickMargin={8}
+                tickFormatter={formatCompact}
               />
-
               <RTooltip content={<CustomTooltip />} />
 
               {algos.map(a => (
