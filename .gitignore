@@ -135,3 +135,5 @@ Thumbs.db
 
 # Optional: Uncomment if you're using Sentry
 # .sentryclirc
+
+.vercel

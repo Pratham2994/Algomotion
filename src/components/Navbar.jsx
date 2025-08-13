@@ -22,6 +22,7 @@ const NAV = [
   { to: '/pathfinding', label: 'Pathfinding' },
   { to: '/complexity', label: 'Complexity' },
   { to: '/library', label: 'Library' },
+  { to: '/ai-complexity', label: 'AI Complexity' },
 ]
 
 export default function Navbar() {

@@ -8,6 +8,7 @@ import Pathfinding from './pages/Pathfinding.jsx'
 import Complexity from './pages/Complexity.jsx'
 import Library from './pages/Library.jsx'
 import Footer from './components/Footer.jsx'
+import AIComplexity from './pages/AIcomplexity.jsx'
 const theme = createTheme({
   palette: { mode: 'dark' },
   shape: { borderRadius: 12 },
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="/pathfinding" element={<Pathfinding />} />
             <Route path="/complexity" element={<Complexity />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/ai-complexity" element={<AIComplexity />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Container>
