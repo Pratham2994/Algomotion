@@ -1,153 +1,64 @@
 # Algomotion
 
-A modern React application built with Vite, featuring Material-UI components, Tailwind CSS styling, and smooth animations powered by Framer Motion.
+Interactive algorithm visualization suite with step-by-step animations, performance analysis, and AI-powered complexity insights.
 
-## 🚀 Features
+## Features
 
-- **Sorting Arena** - Interactive visualization of 6 sorting algorithms (Bubble, Insertion, Selection, Merge, Quick, Heap) with step-by-step animations, customizable speed, and performance metrics
-- **Pathfinding Arena** - Visualize pathfinding algorithms (BFS, DFS, Dijkstra, A*) on dynamic grids with maze generation and open field modes
-- **Complexity Explorer** - Benchmark algorithms across input sizes with Big-O curve overlays and customizable test parameters
-- **Algorithm Library** - Comprehensive reference with pseudocode, complexity analysis, and real-world use cases for each algorithm
-- **Interactive Controls** - Adjustable speed, array sizes, grid dimensions, and algorithm parameters in real-time
-- **Performance Metrics** - Track comparisons, writes, visited nodes, path length, and execution time
-- **Multiple Input Types** - Test algorithms on random, reversed, nearly-sorted, and few-unique data sets
-- **Visual Feedback** - Color-coded animations showing algorithm progress with smooth transitions
-- **Export Capabilities** - Download benchmark results as CSV for further analysis
-- **Responsive Design** - Works seamlessly across desktop and mobile devices
+**Sorting Arena** – Watch 11 sorting algorithms come to life with adjustable speed controls, array customization, and real-time metrics tracking (comparisons, writes, execution time)
 
-## 📋 Prerequisites
+**Pathfinding Arena** – Explore 6 pathfinding algorithms on dynamic grids with maze generation, weighted paths, diagonal movement, and heuristic options
 
-Before you begin, ensure you have the following installed:
-- [Node.js](https://nodejs.org/) (version 18 or higher)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+**Complexity Explorer** – Benchmark algorithms across varying input sizes with Big-O curve overlays, multiple trial runs, and CSV export capabilities
 
-## 🛠️ Installation
+**AI Complexity Analyzer** – Paste any code and get instant Big-O analysis, bottleneck identification, and optimization suggestions powered by AI
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Algomotion
-   ```
+**Algorithm Library** – Complete reference with pseudocode, complexity tables, use cases, and interactive mini-demos for every algorithm
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+## Algorithms Available
 
-## 🏃‍♂️ Available Scripts
+**Sorting (11 algorithms):**
+- **Basic:** Bubble Sort, Insertion Sort, Selection Sort
+- **Efficient:** Merge Sort, Quick Sort, Heap Sort
+- **Linear:** Counting Sort, Radix Sort (LSD)  
+- **Hybrid:** TimSort, IntroSort
+- **Educational:** Pancake Sort
 
-In the project directory, you can run:
+**Pathfinding (6 algorithms):**
+- **Unweighted:** BFS, DFS
+- **Weighted:** Dijkstra, A* (Manhattan/Euclidean/Octile heuristics)
+- **Specialized:** Greedy Best-First, Dial's Algorithm
 
-### `npm run dev`
-Runs the app in development mode.\
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+## Quick Start
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm run build`
-Builds the app for production to the `dist` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-### `npm run preview`
-Locally preview the production build. This will serve the built files from the `dist` folder.
-
-### `npm run lint`
-Runs ESLint to check for code quality issues and enforce coding standards.
-
-## 🏗️ Project Structure
-
-```
-Algomotion/
-├── public/                 # Static assets
-├── src/
-│   ├── components/         # Reusable React components
-│   ├── pages/             # Page components and routing
-│   ├── App.jsx            # Main application component
-│   ├── main.jsx           # Application entry point
-│   └── index.css          # Global styles
-├── package.json           # Dependencies and scripts
-├── vite.config.js         # Vite configuration
-├── eslint.config.js       # ESLint configuration
-└── .gitignore            # Git ignore rules
+```bash
+git clone https://github.com/Pratham2994/Algomotion.git
+cd Algomotion
+npm install
+npm run dev
 ```
 
-## 🛠️ Tech Stack
+Open [localhost:5173](http://localhost:5173) and start exploring algorithms.
 
-- **Frontend Framework**: React 19
-- **Build Tool**: Vite
-- **UI Library**: Material-UI (MUI)
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Routing**: React Router DOM
-- **Charts**: Recharts
-- **Code Quality**: ESLint
-- **Package Manager**: npm/yarn
+## Tech Stack
 
-## 🎨 Styling
+Built with React 19, Vite, Material-UI, Tailwind CSS, and Framer Motion. Deployed on Vercel with analytics and performance monitoring.
 
-This project uses a combination of:
-- **Material-UI (MUI)** for component library and theming
-- **Tailwind CSS** for utility-first styling
-- **Framer Motion** for animations and transitions
+## Development
 
-## 📦 Dependencies
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production  
+npm run preview  # Preview production build
+npm run lint     # Check code quality
+```
 
-### Production Dependencies
-- `@emotion/react` & `@emotion/styled` - CSS-in-JS styling
-- `@mui/material` & `@mui/icons-material` - Material-UI components
-- `framer-motion` - Animation library
-- `react-router-dom` - Client-side routing
-- `recharts` - Chart library
-- `tailwindcss` - Utility-first CSS framework
+The app runs on port 5173 in development mode with hot reloading.
 
-### Development Dependencies
-- `@vitejs/plugin-react` - Vite React plugin
-- `eslint` - Code linting
-- `vite` - Build tool and dev server
-
-## 🚀 Deployment
-
-The easiest way to deploy your React app is to use the [Vite](https://vitejs.dev/) build process.
-
-1. **Build the project**
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy the `dist` folder**
-   The `dist` folder contains your production-ready application.
-
-### Popular deployment platforms:
-- **Vercel**: Connect your GitHub repository for automatic deployments
-- **Netlify**: Drag and drop the `dist` folder
-- **GitHub Pages**: Use GitHub Actions for automatic deployment
-- **Firebase Hosting**: Use Firebase CLI for deployment
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -m 'Add feature'`
+4. Push to branch: `git push origin feature-name`
+5. Open a pull request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-1. Check the [Issues](https://github.com/yourusername/Algomotion/issues) page
-2. Create a new issue with a detailed description
-3. Include steps to reproduce the problem
-
----
-
-**Happy coding! 🎉**
