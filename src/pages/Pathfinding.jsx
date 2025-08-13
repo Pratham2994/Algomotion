@@ -14,7 +14,7 @@ const setParams = (obj) => {
   const sp = new URLSearchParams(location.search)
   Object.entries(obj).forEach(([k, v]) => sp.set(k, String(v)))
   const next = `?${sp.toString()}`
-  if (next !== location.search) history.replaceState(null, '', next) // ✅ guard
+  if (next !== location.search) history.replaceState(null, '', next) 
 }
 
 export default function Pathfinding() {

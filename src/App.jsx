@@ -8,7 +8,7 @@ import Pathfinding from './pages/Pathfinding.jsx'
 import Complexity from './pages/Complexity.jsx'
 import Library from './pages/Library.jsx'
 import Footer from './components/Footer.jsx'
-import AIComplexity from './pages/AIcomplexity.jsx'
+import AIComplexity from './pages/AIComplexity.jsx'
 const theme = createTheme({
   palette: { mode: 'dark' },
   shape: { borderRadius: 12 },
