@@ -9,6 +9,8 @@ import Complexity from './pages/Complexity.jsx'
 import Library from './pages/Library.jsx'
 import Footer from './components/Footer.jsx'
 import AIComplexity from './pages/AIComplexity.jsx'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 const theme = createTheme({
   palette: { mode: 'dark' },
   shape: { borderRadius: 12 },
@@ -51,6 +53,8 @@ export default function App() {
         </Container>
         <div id="footer-sentinel" style={{ height: 1 }} />
         <Footer />
+        {import.meta.env.PROD && <Analytics />}
+        {import.meta.env.PROD && <SpeedInsights />}
       </Box>
     </ThemeProvider>
   )
