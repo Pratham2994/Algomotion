@@ -1,22 +1,61 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
-    { "src": "api/**/*.js", "use": "@vercel/node" }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "routes": [
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/apple-touch-icon.png", "dest": "/apple-touch-icon.png" },
-    { "src": "/og-image.png", "dest": "/og-image.png" },
-    { "src": "/robots.txt", "dest": "/robots.txt" },
-    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
-    { "src": "/site.webmanifest", "dest": "/site.webmanifest", "headers": { "Content-Type": "application/manifest+json; charset=utf-8" } },
-
-    { "handle": "filesystem" },
-
-    { "src": "^/(.*)$", "has": [{ "type": "host", "value": "algomotion.me" }], "status": 301,
-      "headers": { "Location": "https://www.algomotion.me/$1" } },
-
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "dest": "/apple-touch-icon.png"
+    },
+    {
+      "src": "/og-image.png",
+      "dest": "/og-image.png"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "^/(.*)$",
+      "has": [
+        {
+          "type": "host",
+          "value": "algomotion.me"
+        }
+      ],
+      "status": 301,
+      "headers": {
+        "Location": "https://www.algomotion.me/$1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
+    }
   ]
 }
