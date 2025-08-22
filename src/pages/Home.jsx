@@ -6,7 +6,7 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useSEO } from '../lib/useSEO' 
+import { useSEO } from '../hooks/useSEO' 
 
 export default function Home() {
   const reduced = useReducedMotion()
