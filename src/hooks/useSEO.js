@@ -15,3 +15,4 @@ export function useSEO({ title, description, canonical }) {
     }
   }, [title, description, canonical])
 }
+
