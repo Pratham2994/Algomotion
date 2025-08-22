@@ -3,6 +3,15 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
 
+  "headers": [
+    {
+      "source": "/site.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=86400, immutable" }
+      ]
+    }
+  ],
 
   "routes": [
     { "src": "/favicon.ico", "dest": "/favicon.ico" },
@@ -10,7 +19,8 @@
     { "src": "/og-image.png", "dest": "/og-image.png" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/site.webmanifest", "dest": "/site.webmanifest" },
+
     {
       "src": "^/(.*)$",
       "has": [{ "type": "host", "value": "algomotion.me" }],
@@ -29,7 +39,9 @@
       },
       "continue": true
     },
+
     { "handle": "filesystem" },
+
     { "src": "/.*", "dest": "/index.html" }
   ]
 }
