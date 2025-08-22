@@ -1,26 +1,56 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Algomotion</title>
-  <!-- Google tag (gtag.js) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Algomotion – Algorithm Visualization for Sorting & Pathfinding</title>
+
+  <meta name="description" content="Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals." />
+
+  <link rel="canonical" href="https://www.algomotion.me/" />
+
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Algomotion – Algorithm Visualization" />
+  <meta property="og:description" content="Visualize sorting & pathfinding with step-by-step animations." />
+  <meta property="og:url" content="https://www.algomotion.me/" />
+  <meta property="og:image" content="https://www.algomotion.me/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"Algomotion",
+    "url":"https://www.algomotion.me/"
+  }
+  </script>
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-G7XR6NHMTX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-G7XR6NHMTX');
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date()); gtag('config', 'G-G7XR6NHMTX');
   </script>
-
 </head>
-
 <body>
+  <noscript>
+    <main>
+      <h1>Algorithm Visualization: Sorting & Pathfinding</h1>
+      <p>Explore sorting and pathfinding with interactive animations, side-by-side comparisons, and clear Big-O explanations.</p>
+      <ul>
+        <li>Sorting: Bubble, Selection, Insertion, Merge, Quick</li>
+        <li>Pathfinding: BFS, DFS, Dijkstra, A*</li>
+        <li>Controls: speed, step, array/grid size</li>
+      </ul>
+    </main>
+  </noscript>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
-
 </html>

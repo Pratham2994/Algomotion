@@ -9,8 +9,13 @@ import MiniArrayDemo from '../components/library/MiniArrayDemo'
 import MiniGridDemo from '../components/library/MiniGridDemo'
 import AlgoCard from '../components/library/AlgoCard'
 import ComplexityTable from '../components/library/ComplexityTable'
-
+import { useSEO } from '../hooks/useSEO'
 export default function Library() {
+    useSEO({
+        title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
+        description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
+        canonical: "https://www.algomotion.me/"
+    })
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const [search, setSearch] = useState('')

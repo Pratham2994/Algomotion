@@ -7,7 +7,7 @@ import {
   ALGOS, buildMaze, buildOpenGrid, buildWeights,
   DIRS4, DIRS8, makeRng
 } from '../lib/pathCore'
-
+import { useSEO } from '../hooks/useSEO'
 const getParamRaw = (k) => new URLSearchParams(location.search).get(k)
 const getParam = (k, fallback) => getParamRaw(k) ?? fallback
 const setParams = (obj) => {
@@ -18,6 +18,11 @@ const setParams = (obj) => {
 }
 
 export default function Pathfinding() {
+  useSEO({
+      title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
+      description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
+      canonical: "https://www.algomotion.me/"
+  })
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const [mode, setMode] = useState(getParam('mode', 'maze'))

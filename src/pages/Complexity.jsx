@@ -3,8 +3,13 @@ import CompHeader from '../components/complexity/CompHeader'
 import CompControls from '../components/complexity/CompControls'
 import CompChart from '../components/complexity/CompChart'
 import { makeArray, median, SORTERS, O_CURVES, COLORS } from '../lib/benchCore'
-
+import { useSEO } from '../hooks/useSEO'
 export default function Complexity() {
+  useSEO({
+      title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
+      description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
+      canonical: "https://www.algomotion.me/"
+  })
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const [algos, setAlgos] = useState(['merge', 'quick', 'heap'])

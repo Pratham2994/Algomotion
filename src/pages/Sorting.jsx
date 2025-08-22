@@ -4,13 +4,18 @@ import SortHeader from '../components/sorting/SortHeader'
 import SortControls from '../components/sorting/SortControls'
 import BarViz from '../components/sorting/BarViz'
 import SortMetrics from '../components/sorting/SortMetrics'
-
+import {useSEO} from '../hooks/useSEO'
 function mulberry32(seed) { let t = seed >>> 0; return function () { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296 } }
 function hashSeed(...vals) { let h = 2166136261; for (const ch of vals.join('|')) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) } return h >>> 0 }
 const getParam = (k, f) => new URLSearchParams(location.search).get(k) ?? f
 function setParams(obj) { const sp = new URLSearchParams(location.search); Object.entries(obj).forEach(([k, v]) => sp.set(k, String(v))); history.replaceState(null, '', `?${sp.toString()}`) }
 
 export default function Sorting() {
+    useSEO({
+        title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
+        description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
+        canonical: "https://www.algomotion.me/"
+    })
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);

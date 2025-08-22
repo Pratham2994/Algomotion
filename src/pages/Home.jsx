@@ -6,9 +6,15 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useSEO } from '../lib/useSEO' 
 
 export default function Home() {
   const reduced = useReducedMotion()
+  useSEO({
+    title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
+    description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
+    canonical: "https://www.algomotion.me/"
+  })
 
   return (
     <div className="space-y-10">
