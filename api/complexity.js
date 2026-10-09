@@ -15,9 +15,14 @@ export default async function handler(req, res) {
     const apiKey = process.env.OPENROUTER_API_KEY3;
     if (!apiKey) return res.status(500).json({ error: 'Missing OPENROUTER_API_KEY on server.' });
 
-    //const model = "deepseek/deepseek-chat-v3-0324:free";
-    //const model = "qwen/qwen3-coder:free";
-    const model = "openai/gpt-oss-20b:free";
+    // Free models on OpenRouter come and go. So there are three, and OpenRouter takes the
+    // first one that is still there. OPENROUTER_MODEL in the environment puts one in front.
+    const models = [
+      process.env.OPENROUTER_MODEL,
+      "nvidia/nemotron-3-super-120b-a12b:free",
+      "google/gemma-4-31b-it:free",
+      "cohere/north-mini-code:free",
+    ].filter(Boolean).slice(0, 3);
     const instructions = [
       "You are an expert algorithm complexity analyst.",
       "Analyze the provided code and return ONLY one JSON object with these keys: algorithmName, category, paradigm, primaryDataStructures, timeComplexity (bestCase, averageCase, worstCase), spaceComplexity, stable, inPlace, commonUseCases, bottlenecks, assumptions, possibleOptimizations, relatedAlgorithms, pseudocode, summary.",
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
     const userBlock = `Language: ${language || 'auto-detect'}\nCode:\n${code.slice(0, 60000)}`;
 
     const payload = {
-      model,
+      models,
       messages: [
         { role: "system", content: instructions },
         { role: "user", content: userBlock }

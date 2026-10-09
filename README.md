@@ -60,7 +60,9 @@ npm run lint
 
 The Code check page needs the function in `api/complexity.js`. That is a Vercel
 function, so it runs on the deployed site and not under `npm run dev`. It calls a free
-model on OpenRouter and needs `OPENROUTER_API_KEY3` in the environment.
+model on OpenRouter and needs `OPENROUTER_API_KEY3` in the environment. Free models
+come and go, so it names three and takes the first that answers. Set `OPENROUTER_MODEL`
+to put your own choice in front.
 
 ## How it is built
 
