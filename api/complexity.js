@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://your-site-url.com",
+        "HTTP-Referer": "https://algomotion-pratham.vercel.app",
         "X-Title": "Algorithm Complexity Analyzer"
       },
       body: JSON.stringify(payload)

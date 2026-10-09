@@ -2,7 +2,7 @@
 
 Sorting and pathfinding algorithms, one step at a time. Forwards and backwards.
 
-**[Open it](https://algomotion-git-main-prathams-projects-6b932a74.vercel.app/)**
+**[Open it](https://algomotion-pratham.vercel.app/)**
 
 I only understood algorithms once I could watch them move. This is the thing I wanted
 when I was learning them.
