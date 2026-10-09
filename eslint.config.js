@@ -26,4 +26,6 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  // The serverless function runs in Node, not in the browser
+  { files: ['api/**/*.js'], languageOptions: { globals: globals.node } },
 ])

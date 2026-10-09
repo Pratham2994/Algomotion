@@ -1,163 +1,104 @@
-import { Button, Card, CardContent, CardHeader, Typography, Box } from '@mui/material'
-import TimelineIcon from '@mui/icons-material/Timeline'
-import RouteIcon from '@mui/icons-material/Route'
-import ScienceIcon from '@mui/icons-material/Science'
-import QueryStatsIcon from '@mui/icons-material/QueryStats'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
-import { useSEO } from '../hooks/useSEO' 
+import { EMITTERS } from '../lib/sortEmitters'
+import { hashSeed, mulberry32 } from '../lib/pathCore'
+import { useSEO } from '../hooks/useSEO'
 
-export default function Home() {
-  const reduced = useReducedMotion()
-  useSEO({
-    title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
-    description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
-    canonical: "https://www.algomotion.me/"
-  })
+const ROOMS = [
+  ['/sorting', 'Sorting', '11 algorithms', 'Play one, step back through it, and see all eleven counted on the same list.'],
+  ['/pathfinding', 'Pathfinding', '6 algorithms', 'A maze you can draw on. Watch each search spread, and see which one looks at the least.'],
+  ['/complexity', 'Complexity', 'the curve', 'Count the work on bigger and bigger lists. The Big-O line turns up by itself.'],
+  ['/library', 'Library', '17 entries', 'Pseudocode, costs and when to use it, for every algorithm here.'],
+  ['/ai-complexity', 'Code check', 'paste code', 'Paste a function. A model estimates its Big-O and says where the time goes.'],
+]
+
+const ORDER = ['quick', 'heap', 'merge', 'insertion']
+
+/** A sort that plays by itself, then another one. The same recordings the Sorting page plays. */
+function Reel() {
+  const [turn, setTurn] = useState(0)
+  const [cursor, setCursor] = useState(0)
+  const key = ORDER[turn % ORDER.length]
+  const base = useMemo(() => {
+    const rng = mulberry32(hashSeed('home', turn))
+    return Array.from({ length: 36 }, () => Math.floor(rng() * 95) + 5)
+  }, [turn])
+  const steps = useMemo(() => EMITTERS[key].fn(base).steps, [key, base])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = setInterval(() => {
+      setCursor((c) => {
+        if (c < steps.length + 40) return c + 2
+        setTurn((t) => t + 1)
+        return 0
+      })
+    }, 30)
+    return () => clearInterval(id)
+  }, [steps.length])
+
+  const list = base.slice()
+  const upTo = Math.min(cursor, steps.length)
+  for (let k = 0; k < upTo; k++) {
+    const s = steps[k]
+    if (s.type === 'swap') [list[s.i], list[s.j]] = [list[s.j], list[s.i]]
+    else if (s.type === 'overwrite') list[s.i] = s.value
+  }
+  const last = upTo > 0 && upTo < steps.length ? steps[upTo - 1] : null
 
   return (
-    <div className="space-y-10">
-      <motion.section
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={reduced ? undefined : { y: -2 }}
-        transition={{ duration: 0.35 }}
-        className="rounded-2xl border border-slate-800 bg-[#0d1422]/60 p-6 md:p-8 
-                   transition-all duration-200 hover:border-cyan-300/40 
-                   hover:shadow-[0_8px_28px_rgba(2,132,199,.15)]"
-      >
-        <div className="flex flex-col gap-6">
-          <div>
-            <h1 className="font-semibold tracking-tight
-                           text-[28px] sm:text-[34px] md:text-[40px] lg:text-[48px]">
-              Algorithm Visualization Suite
-            </h1>
-            <p className="text-slate-300 mt-3 leading-relaxed">
-              Interactive, step-by-step visuals for <span className="text-slate-100">Sorting</span> and{' '}
-              <span className="text-slate-100">Pathfinding</span> algorithms, plus a hands-on{' '}
-              <span className="text-slate-100">Complexity Explorer</span>. Tune parameters, watch clean
-              animations, and read clear metrics that line up with Big-O.
-            </p>
-          </div>
-        </div>
-      </motion.section>
-
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FeatureCard
-          icon={<TimelineIcon sx={{ fontSize: 24 }} />}
-          title="Sorting Arena"
-          subtitle="Visualize and compare sorting algorithms in action"
-          bullets={[
-            'Step-by-step animations for 6 algorithms',
-            'Metrics tracking: comparisons, writes',
-            'Customizable speed, array size, controls',
-          ]}
-          to="/sorting"
-          cta="Open Sorting"
-        />
-
-        <FeatureCard
-          icon={<RouteIcon sx={{ fontSize: 24 }} />}
-          title="Pathfinding Arena"
-          subtitle="Test multiple algorithms on dynamic grids"
-          bullets={[
-            'Maze & open-grid modes',
-            'BFS / Dijkstra / A* / DFS',
-            'Adjustable speed with smooth trails',
-          ]}
-          to="/pathfinding"
-          cta="Open Pathfinding"
-        />
-
-        <FeatureCard
-          icon={<QueryStatsIcon sx={{ fontSize: 24 }} />}
-          title="Complexity Explorer"
-          subtitle="Benchmark algorithms and compare with theory"
-          bullets={[
-            'Run multiple trials per input size',
-            'Customizable seed for reproducible tests',
-            'Measured times vs Big-O overlays',
-          ]}
-          to="/complexity"
-          cta="Open Explorer"
-        />
-
-        <FeatureCard
-          icon={<ScienceIcon sx={{ fontSize: 24 }} />}
-          title="Algorithm Library"
-          subtitle="Quick-reference hub for algorithms"
-          bullets={[
-            'Concise notes + Big-O tables',
-            'Clear pseudocode & gotchas',
-            'Tiny inline mini-demos',
-          ]}
-          to="/library"
-          cta="Open Library"
-        />
-      </section>
-    </div>
+    <figure className="reel">
+      <div className="bars" data-many aria-hidden="true">
+        {list.map((value, i) => (
+          <i
+            key={i}
+            data-state={last && (i === last.i || i === last.j) ? last.type : upTo >= steps.length ? 'placed' : undefined}
+            style={{ height: `${value}%` }}
+          />
+        ))}
+      </div>
+      <figcaption>
+        {EMITTERS[key].label}, {EMITTERS[key].bigO}
+      </figcaption>
+    </figure>
   )
 }
 
-function FeatureCard({ icon, title, subtitle, bullets, to, cta }) {
-    const reduced = useReducedMotion()
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.35 }}
-        whileHover={reduced ? undefined : { y: -2 }}
-      >
-        <Card variant="outlined" sx={{ borderColor: '#1f2937', background: '#0a1220',
-          transition: 'border-color .2s ease, box-shadow .2s ease, transform .2s ease',
-          '&:hover': { borderColor: 'rgba(103,232,249,.45)', boxShadow: '0 8px 28px rgba(2,132,199,.15)' },
-        }}>
-          <CardHeader
-            avatar={<div className="text-cyan-300" aria-hidden>{icon}</div>}
-            title={<Typography variant="h6" className="!font-semibold !text-slate-100">{title}</Typography>}
-            subheader={<span className="text-slate-300">{subtitle}</span>}
-            sx={{ pb: 0.5 }}
-          />
-          <CardContent>
-            <Box className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6">
-              <Box className="flex-1">
-                <ul className="list-disc list-inside text-slate-200/90 space-y-1.5">
-                  {bullets.map((b, i) => (<li key={i}>{b}</li>))}
-                </ul>
-              </Box>
-              <Box className="md:shrink-0">
-                <PrimaryCTA to={to} ariaLabel={`${cta}: ${title}`} />
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
-      </motion.div>
-    )
-  }
-  
-  function PrimaryCTA({ to, ariaLabel }) {
-    return (
-      <Button
-        component={Link}
-        to={to}
-        aria-label={ariaLabel}
-        size="medium"
-        fullWidth               
-        endIcon={<ChevronRightIcon sx={{ fontSize: 18 }} />}
-        sx={{
-          borderRadius: 9999, px: 2.8, py: 1.1, textTransform: 'none', fontWeight: 800, letterSpacing: 0.2,
-          color: '#031a1e',
-          backgroundImage: 'linear-gradient(180deg, #8ff0ff 0%, #67e8f9 60%, #4ccedd 100%)',
-          boxShadow: '0 6px 22px rgba(103,232,249,.28)',
-          ':hover': { boxShadow: '0 10px 28px rgba(103,232,249,.38)', filter: 'brightness(1.05)', transform: 'translateY(-1px)' },
-          ':active': { transform: 'translateY(0)', filter: 'brightness(0.98)' },
-          ':focus-visible': { outline: '2px solid #67e8f9', outlineOffset: '3px' },
-        }}
-      >
-        Open
-      </Button>
-    )
-  }
-
+export default function Home() {
+  useSEO({
+    title: 'Algomotion - sorting and pathfinding, one step at a time',
+    description: 'Sorting and pathfinding algorithms, recorded and played back one step at a time. Step forwards, step back, compare them, and see where Big-O comes from.',
+  })
+  return (
+    <div className="home">
+      <div className="lead">
+        <p className="eyebrow">Algorithms, one step at a time</p>
+        <h1>Watch it work. Then drag it backwards.</h1>
+        <p className="lede">
+          Every algorithm here runs to the end first and writes down each thing it did. What you watch is that
+          recording. So you can pause it, step through it, and go back to the move you missed.
+        </p>
+        <div className="chips">
+          <Link className="button solid" to="/sorting">
+            Open sorting
+          </Link>
+          <Link className="button" to="/pathfinding">
+            Open pathfinding
+          </Link>
+        </div>
+      </div>
+      <Reel />
+      <ul className="rooms">
+        {ROOMS.map(([to, name, tag, text]) => (
+          <li key={to}>
+            <Link to={to}>
+              <b>{name}</b>
+              <small>{tag}</small>
+              <span>{text}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
