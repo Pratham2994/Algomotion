@@ -1,64 +1,87 @@
 # Algomotion
 
-Interactive algorithm visualization suite with step-by-step animations, performance analysis, and AI-powered complexity insights.
+Sorting and pathfinding algorithms, one step at a time. Forwards and backwards.
 
-## Features
+**[Open it](https://algomotion-git-main-prathams-projects-6b932a74.vercel.app/)**
 
-**Sorting Arena** – Watch 11 sorting algorithms come to life with adjustable speed controls, array customization, and real-time metrics tracking (comparisons, writes, execution time)
+I only understood algorithms once I could watch them move. This is the thing I wanted
+when I was learning them.
 
-**Pathfinding Arena** – Explore 6 pathfinding algorithms on dynamic grids with maze generation, weighted paths, diagonal movement, and heuristic options
+## The one idea
 
-**Complexity Explorer** – Benchmark algorithms across varying input sizes with Big-O curve overlays, multiple trial runs, and CSV export capabilities
+No algorithm here is slowed down to be drawn. Each one runs to the end first, at full
+speed, and writes down every compare, swap and visit. The page then plays that list.
 
-**AI Complexity Analyzer** – Paste any code and get instant Big-O analysis, bottleneck identification, and optimization suggestions powered by AI
+That one choice gives the rest for free:
 
-**Algorithm Library** – Complete reference with pseudocode, complexity tables, use cases, and interactive mini-demos for every algorithm
+- **Step back.** The page draws the state at step 412 by playing steps 0 to 412. So
+  step 411 is as easy as step 413.
+- **A timeline.** Drag it to any point of the run.
+- **A scoreboard.** All eleven sorts have already run on your list, so the table of
+  comparisons and writes is there before you press play.
 
-## Algorithms Available
+## What is in it
 
-**Sorting (11 algorithms):**
-- **Basic:** Bubble Sort, Insertion Sort, Selection Sort
-- **Efficient:** Merge Sort, Quick Sort, Heap Sort
-- **Linear:** Counting Sort, Radix Sort (LSD)  
-- **Hybrid:** TimSort, IntroSort
-- **Educational:** Pancake Sort
+| Page | What you do there |
+| --- | --- |
+| Sorting | Watch 11 sorts on a list of 5 to 100 bars. Random, nearly sorted, reversed, or few values |
+| Pathfinding | Six searches on a maze or an open field. Draw walls, drag the two ends, add heavy cells and diagonal moves |
+| Complexity | Count the work on bigger and bigger lists, and set the dots against the Big-O curves. Saves to CSV |
+| Library | Pseudocode, costs and uses for all 17 algorithms |
+| Code check | Paste a function. A model estimates its Big-O and says where the time goes |
 
-**Pathfinding (6 algorithms):**
-- **Unweighted:** BFS, DFS
-- **Weighted:** Dijkstra, A* (Manhattan/Euclidean/Octile heuristics)
-- **Specialized:** Greedy Best-First, Dial's Algorithm
+**Sorting:** Bubble, Insertion, Selection, Merge, Quick, Heap, Counting, Radix (LSD),
+TimSort, IntroSort, Pancake.
 
-## Quick Start
+**Pathfinding:** BFS, DFS, Dijkstra, A* (Manhattan, Euclidean or Octile), Greedy
+best-first, Dial's.
 
-```bash
+Space plays and pauses. The arrow keys step, and Shift with an arrow steps by ten.
+
+Every setting is in the address bar. The same link opens the same list or the same
+maze, because both are built from a seed.
+
+## Run it
+
+```sh
 git clone https://github.com/Pratham2994/Algomotion.git
 cd Algomotion
 npm install
 npm run dev
 ```
 
-Open [localhost:5173](http://localhost:5173) and start exploring algorithms.
+Open http://localhost:5173.
 
-## Tech Stack
-
-Built with React 19, Vite, Material-UI, Tailwind CSS, and Framer Motion. Deployed on Vercel with analytics and performance monitoring.
-
-## Development
-
-```bash
-npm run dev      # Start development server
-npm run build    # Build for production  
-npm run preview  # Preview production build
-npm run lint     # Check code quality
+```sh
+npm run build    # build for production
+npm run preview  # serve the build
+npm run lint
 ```
 
-The app runs on port 5173 in development mode with hot reloading.
-(Ai-complexity wont work locally)
-## Contributing
+The Code check page needs the function in `api/complexity.js`. That is a Vercel
+function, so it runs on the deployed site and not under `npm run dev`. It calls a free
+model on OpenRouter and needs `OPENROUTER_API_KEY3` in the environment.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit changes: `git commit -m 'Add feature'`
-4. Push to branch: `git push origin feature-name`
-5. Open a pull request
+## How it is built
 
+```
+src/
+  lib/sortEmitters.js   The 11 sorts. Each returns { steps, metrics }
+  lib/pathCore.js       The 6 searches, the maze builder, the seeded random numbers
+  lib/benchCore.js      The same sorts with no recording, for the Complexity page
+  lib/libraryData.js    The text of the Library
+  hooks/usePlayer.js    The playhead: play, pause, step, seek, keys
+  pages/                One file for each page
+api/complexity.js       The serverless function behind Code check
+```
+
+A step is a small object: `{ type: 'swap', i: 3, j: 7 }` or
+`{ type: 'visit', r: 4, c: 9 }`. The player knows nothing about sorting or mazes. It
+holds a number, and the page draws what the list says at that number.
+
+React 19 and Vite, with plain CSS. No UI library and no chart library. The chart on the
+Complexity page is drawn by hand as SVG.
+
+## Licence
+
+MIT.

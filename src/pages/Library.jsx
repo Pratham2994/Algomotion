@@ -1,90 +1,97 @@
-import { useMemo, useState, useEffect } from 'react'
-import { Box, Button, Card, CardContent, Typography, Tooltip } from '@mui/material'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
-import { COMPLEXITY, COMPLEXITY_ROWS } from '../lib/libraryData'
-import LibraryHeader from '../components/library/LibraryHeader'
-import LibraryTopControls from '../components/library/LibraryTopControls'
-import MiniArrayDemo from '../components/library/MiniArrayDemo'
-import MiniGridDemo from '../components/library/MiniGridDemo'
-import AlgoCard from '../components/library/AlgoCard'
-import ComplexityTable from '../components/library/ComplexityTable'
+import { COMPLEXITY } from '../lib/libraryData'
 import { useSEO } from '../hooks/useSEO'
+
+const SHELVES = { sorting: 'Sorting', path: 'Pathfinding' }
+
+function Entry({ item }) {
+  return (
+    <details className="entry" id={item.key}>
+      <summary>
+        <b>{item.name}</b>
+        <span>{item.blurb}</span>
+        <code>{item.avg}</code>
+      </summary>
+      <div className="entry-body">
+        <div>
+          <dl className="costs">
+            {[
+              ['Best', item.best],
+              ['Average', item.avg],
+              ['Worst', item.worst],
+              ['Space', item.space],
+            ]
+              .filter(([, value]) => value)
+              .map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+          </dl>
+          {item.props?.length > 0 && (
+            <ul className="tags">
+              {item.props.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+          )}
+          {item.uses?.length > 0 && (
+            <>
+              <h3>Use it for</h3>
+              <ul className="plain">
+                {item.uses.map((u) => (
+                  <li key={u}>{u}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {item.openLink && (
+            <Link className="button" to={item.openLink}>
+              Watch it run
+            </Link>
+          )}
+        </div>
+        {item.pseudo?.length > 0 && <pre className="code">{item.pseudo.join('\n')}</pre>}
+      </div>
+    </details>
+  )
+}
+
 export default function Library() {
-    useSEO({
-        title: "Algomotion – Algorithm Visualization for Sorting & Pathfinding",
-        description: "Interactive algorithm visualizer for sorting and pathfinding. Compare algorithms side-by-side, step through animations, and learn Big-O with clear, annotated visuals.",
-        canonical: "https://www.algomotion.me/"
-    })
-  useEffect(() => { window.scrollTo(0, 0) }, [])
-
-  const [search, setSearch] = useState('')
-  const [tab, setTab] = useState(0) 
-
-  const algorithms = useMemo(() => ([
-    ...COMPLEXITY.sorting.map(a => ({ ...a, _cat: 'sorting' })),
-    ...COMPLEXITY.path.map(a => ({ ...a, _cat: 'path' })),
-  ]), [])
-
-  const filtered = algorithms.filter(a => {
-    if (tab === 1 && a._cat !== 'sorting') return false
-    if (tab === 2 && a._cat !== 'path') return false
-    const q = search.trim().toLowerCase()
-    if (!q) return true
-    return (
-      a.name.toLowerCase().includes(q) ||
-      a.blurb.toLowerCase().includes(q) ||
-      a.uses.some(u => u.toLowerCase().includes(q))
-    )
+  useSEO({
+    title: 'Library - Algomotion',
+    description: 'Pseudocode, costs and uses for eleven sorting algorithms and six pathfinding algorithms.',
   })
+  const [shelf, setShelf] = useState('sorting')
+  const [query, setQuery] = useState('')
+  const words = query.trim().toLowerCase()
+  const items = COMPLEXITY[shelf].filter((item) => !words || `${item.name} ${item.blurb} ${(item.props || []).join(' ')}`.toLowerCase().includes(words))
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 px-3 sm:px-4 md:px-6 py-4 sm:py-6">
-      <LibraryHeader />
-      <LibraryTopControls tab={tab} setTab={setTab} search={search} setSearch={setSearch} />
-
-      <Box className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MiniArrayDemo />
-        <MiniGridDemo />
-      </Box>
-
-      <Box className="space-y-6">
-        {filtered.map(a => (
-          <AlgoCard key={`${a._cat}-${a.key}`} algo={a} category={a._cat} />
+    <div className="page">
+      <div className="lead">
+        <p className="eyebrow">Library</p>
+        <h1>What each one does, and what it costs</h1>
+        <p className="lede">Open an entry for the pseudocode. Then go and watch it run.</p>
+      </div>
+      <div className="toolbar">
+        <div className="chips" role="group" aria-label="Shelf">
+          {Object.entries(SHELVES).map(([key, label]) => (
+            <button key={key} type="button" aria-pressed={shelf === key} onClick={() => setShelf(key)}>
+              {label} <small>{COMPLEXITY[key].length}</small>
+            </button>
+          ))}
+        </div>
+        <input type="search" placeholder="Search. Try stable, or heuristic" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search the library" />
+      </div>
+      <div className="entries">
+        {items.map((item) => (
+          <Entry key={item.key} item={item} />
         ))}
-        {filtered.length === 0 && (
-          <Card variant="outlined" sx={{ borderColor: '#1f2937', background: '#0a1220' }}>
-            <CardContent>
-              <Typography className="text-slate-400">No matches. Try a different search.</Typography>
-            </CardContent>
-          </Card>
-        )}
-      </Box>
-
-      <ComplexityTable rows={COMPLEXITY_ROWS} />
-
-      <Box className="flex flex-wrap gap-3">
-        <Tooltip title="Open Sorting Arena">
-          <Button
-            component={Link}
-            to="/sorting"
-            variant="outlined"
-            sx={{ borderColor: '#67e8f9', color: '#67e8f9', textTransform: 'none' }}
-          >
-            Go to Sorting
-          </Button>
-        </Tooltip>
-        <Tooltip title="Open Pathfinding Arena">
-          <Button
-            component={Link}
-            to="/pathfinding"
-            variant="outlined"
-            sx={{ borderColor: '#67e8f9', color: '#67e8f9', textTransform: 'none' }}
-          >
-            Go to Pathfinding
-          </Button>
-        </Tooltip>
-      </Box>
+        {items.length === 0 && <p className="hint">Nothing matches that.</p>}
+      </div>
     </div>
   )
 }

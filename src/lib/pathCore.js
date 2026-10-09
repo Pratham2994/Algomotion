@@ -164,7 +164,7 @@ export function aStarSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false
 }
 export function greedyBestFirstSteps(
     grid, start, goal,
-    { dirs = DIRS4, rng = null, randomTies = false, weights = null, heuristic = 'manhattan' } = {}
+    { dirs = DIRS4, rng = null, randomTies = false, heuristic = 'manhattan' } = {}
   ){
     const rows = grid.length, cols = grid[0].length
     const inb = (r,c)=>r>=0&&c>=0&&r<rows&&c<cols
@@ -255,7 +255,6 @@ export function greedyBestFirstSteps(
     dist[start.r][start.c]=0
     push(start.r, start.c, 0)
   
-    let found=false
     while(idx < MAXD){
       while(idx<MAXD && buckets[idx].length===0) idx++
       if(idx>=MAXD) break
@@ -263,7 +262,7 @@ export function greedyBestFirstSteps(
       const cur = buckets[idx].shift()
       if(cur.d!==dist[cur.r][cur.c]) continue
       steps.push({type:'visit', r:cur.r, c:cur.c}); visited++
-      if(cur.r===goal.r && cur.c===goal.c){ found=true; break }
+      if(cur.r===goal.r && cur.c===goal.c)break
   
       const nbrs = randomTies && rng ? shuffled(dirs, rng) : dirs
       for(const [dr,dc] of nbrs){
