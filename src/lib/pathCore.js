@@ -154,6 +154,7 @@ export function aStarSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false
       if(tentative<g[nr][nc]){
         parent[nr+','+nc]={r:cur.r,c:cur.c}; g[nr][nc]=tentative; f[nr][nc]=tentative+h({r:nr,c:nc},goal)
         if(!inOpen.has(nr+','+nc)){ open.push({r:nr,c:nc,f:f[nr][nc],g:g[nr][nc]}); inOpen.add(nr+','+nc); steps.push({type:'frontier',r:nr,c:nc}) }
+        else { const e=open.find((o)=>o.r===nr&&o.c===nc); e.f=f[nr][nc]; e.g=tentative }
       }
     }
   }
