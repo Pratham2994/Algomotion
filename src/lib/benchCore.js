@@ -8,7 +8,7 @@ export function makeArray(n, kind, seed){
   if(kind==='reversed'){
     return Array.from({length:n}, (_,i)=> n - i)
   } else if(kind==='nearly'){
-    const a = Array.from({length:n}, () => (rng()*1000|0))
+    const a = Array.from({length:n}, () => (rng()*1000|0)).sort((x,y)=>x-y)
     const swaps = Math.max(1, Math.floor(n*0.05))
     for(let k=0;k<swaps;k++){
       const i=(rng()*n)|0, j=Math.min(n-1, i+((rng()*5)|0))
@@ -23,7 +23,9 @@ export function makeArray(n, kind, seed){
 }
 
 export function bubbleMeasure(a0){ const a=a0.slice(); let c=0,w=0
-  for(let i=0;i<a.length-1;i++){ for(let j=0;j<a.length-1-i;j++){ c++; if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; w++ } } }
+  for(let i=0;i<a.length-1;i++){ let swapped=false
+    for(let j=0;j<a.length-1-i;j++){ c++; if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; w++; swapped=true } }
+    if(!swapped) break }
   return {comparisons:c,writes:w}
 }
 export function insertionMeasure(a0){ const a=a0.slice(); let c=0,w=0
@@ -55,7 +57,10 @@ export function quickMeasure(a0){ const a=a0.slice(); let c=0,w=0
     for(let j=lo;j<hi;j++){ c++; if(a[j]<=pivot){ if(i!==j){ [a[i],a[j]]=[a[j],a[i]]; w++ } i++ } }
     if(i!==hi){ [a[i],a[hi]]=[a[hi],a[i]]; w++ } return i
   }
-  (function qs(lo,hi){ if(lo>=hi) return; const p=part(lo,hi); qs(lo,p-1); qs(p+1,hi) })(0,a.length-1)
+  // Recurse into the smaller side and loop on the larger one, so a sorted or reversed list
+  // (the worst case for a last-element pivot) cannot overflow the call stack
+  (function qs(lo,hi){ while(lo<hi){ const p=part(lo,hi)
+    if(p-lo < hi-p){ qs(lo,p-1); lo=p+1 } else { qs(p+1,hi); hi=p-1 } } })(0,a.length-1)
   return {comparisons:c,writes:w}
 }
 export function heapMeasure(a0){ const a=a0.slice(); let c=0,w=0, n=a.length

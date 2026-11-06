@@ -7,6 +7,8 @@ export const shuffled=(arr,rng)=>{const a=arr.slice();for(let i=a.length-1;i>0;i
 export const EMPTY=0, WALL=1
 export const DIRS4=[[1,0],[-1,0],[0,1],[0,-1]]
 export const DIRS8=[...DIRS4,[1,1],[1,-1],[-1,1],[-1,-1]]
+// A diagonal step may not squeeze between two cells when either side is a wall
+export const cutsCorner=(grid,r,c,dr,dc)=>dr!==0&&dc!==0&&(grid[r+dr][c]===WALL||grid[r][c+dc]===WALL)
 export const manhattan=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)
 export const euclid=(a,b)=>Math.hypot(a.r-b.r,a.c-b.c)
 export const octile=(a,b)=>{const dx=Math.abs(a.c-b.c),dy=Math.abs(a.r-b.r),D=1,D2=Math.SQRT2;return D*(dx+dy)+(D2-2*D)*Math.min(dx,dy)}
@@ -62,9 +64,9 @@ export function bfsSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false,w
   if(weights||(dirs.length===8)) return dijkstraSteps(grid,start,goal,{dirs,rng,randomTies,weights})
   const rows=grid.length, cols=grid[0].length, inb=(r,c)=>r>=0&&c>=0&&r<rows&&c<cols
   const steps=[], q=[start], seen=new Set([start.r+','+start.c]), parent={}
-  let visited=0
-  while(q.length){
-    const cur=q.shift(); steps.push({type:'visit',...cur}); visited++
+  let visited=0, head=0
+  while(head<q.length){
+    const cur=q[head++]; steps.push({type:'visit',...cur}); visited++
     if(cur.r===goal.r&&cur.c===goal.c) break
     const nbrs=randomTies&&rng?shuffled(dirs,rng):dirs
     for(const [dr,dc] of nbrs){
@@ -96,12 +98,15 @@ export function dijkstraSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=fa
   const pq=[{r:start.r,c:start.c,d:0}]
   while(pq.length){
     let idx=0; for(let i=1;i<pq.length;i++){ if(pq[i].d<pq[idx].d) idx=i; else if(pq[i].d===pq[idx].d && randomTies && rng && rng()<0.5) idx=i }
-    const cur=pq.splice(idx,1)[0]; steps.push({type:'visit',r:cur.r,c:cur.c}); visited++
+    const cur=pq.splice(idx,1)[0]
+    // An entry pushed before a cheaper route was found is out of date: the cell was already visited
+    if(cur.d>dist[cur.r][cur.c]) continue
+    steps.push({type:'visit',r:cur.r,c:cur.c}); visited++
     if(cur.r===goal.r&&cur.c===goal.c) break
     const nbrs=randomTies&&rng?shuffled(dirs,rng):dirs
     for(const [dr,dc] of nbrs){
       const nr=cur.r+dr,nc=cur.c+dc
-      if(!inb(nr,nc)||grid[nr][nc]===WALL) continue
+      if(!inb(nr,nc)||grid[nr][nc]===WALL||cutsCorner(grid,cur.r,cur.c,dr,dc)) continue
       const nd=cur.d + w(nr,nc,cur.r,cur.c)
       if(nd<dist[nr][nc]){ dist[nr][nc]=nd; parent[nr+','+nc]={r:cur.r,c:cur.c}; pq.push({r:nr,c:nc,d:nd}); steps.push({type:'frontier',r:nr,c:nc}) }
     }
@@ -122,7 +127,7 @@ export function dfsSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false}=
     const nbrs=randomTies&&rng?shuffled(dirs,rng):dirs
     for(const [dr,dc] of nbrs){
       const nr=cur.r+dr,nc=cur.c+dc,key=keyOf(nr,nc)
-      if(!inb(nr,nc)||grid[nr][nc]===WALL||seen.has(key)) continue
+      if(!inb(nr,nc)||grid[nr][nc]===WALL||cutsCorner(grid,cur.r,cur.c,dr,dc)||seen.has(key)) continue
       seen.add(key); parent[key]=cur; stack.push({r:nr,c:nc}); steps.push({type:'frontier',r:nr,c:nc})
     }
   }
@@ -134,7 +139,9 @@ export function dfsSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false}=
 
 export function aStarSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false,weights=null,heuristic='manhattan'}={}){
   const rows=grid.length, cols=grid[0].length, inb=(r,c)=>r>=0&&c>=0&&r<rows&&c<cols
-  const h= heuristic==='euclid'?euclid : heuristic==='octile'?octile : manhattan
+  // Manhattan counts a diagonal step as 2 when it costs √2, so with diagonals it overestimates and A*
+  // can miss the shortest path. Octile is exact for 8-way moves.
+  const h= heuristic==='euclid'?euclid : heuristic==='octile'||dirs.length===8?octile : manhattan
   const w=(r,c,pr,pc)=>((r!==pr&&c!==pc)?Math.SQRT2:1) * (weights?weights[r][c]:1)
   const g=Array.from({length:rows},()=>Array(cols).fill(Infinity))
   const f=Array.from({length:rows},()=>Array(cols).fill(Infinity))
@@ -149,7 +156,7 @@ export function aStarSteps(grid,start,goal,{dirs=DIRS4,rng=null,randomTies=false
     const nbrs=randomTies&&rng?shuffled(dirs,rng):dirs
     for(const [dr,dc] of nbrs){
       const nr=cur.r+dr,nc=cur.c+dc
-      if(!inb(nr,nc)||grid[nr][nc]===WALL) continue
+      if(!inb(nr,nc)||grid[nr][nc]===WALL||cutsCorner(grid,cur.r,cur.c,dr,dc)) continue
       const tentative=g[cur.r][cur.c]+w(nr,nc,cur.r,cur.c)
       if(tentative<g[nr][nc]){
         parent[nr+','+nc]={r:cur.r,c:cur.c}; g[nr][nc]=tentative; f[nr][nc]=tentative+h({r:nr,c:nc},goal)
@@ -205,7 +212,7 @@ export function greedyBestFirstSteps(
       const nbrs = randomTies && rng ? shuffled(dirs, rng) : dirs
       for(const [dr,dc] of nbrs){
         const nr=cur.r+dr, nc=cur.c+dc, nk=nr+','+nc
-        if(!inb(nr,nc) || grid[nr][nc]===WALL) continue
+        if(!inb(nr,nc) || grid[nr][nc]===WALL || cutsCorner(grid,cur.r,cur.c,dr,dc)) continue
         if(inClosed.has(nk)) continue
         if(!inOpen.has(nk)){
           parent[nk]={r:cur.r,c:cur.c}
@@ -268,7 +275,7 @@ export function greedyBestFirstSteps(
       const nbrs = randomTies && rng ? shuffled(dirs, rng) : dirs
       for(const [dr,dc] of nbrs){
         const nr=cur.r+dr, nc=cur.c+dc
-        if(!inb(nr,nc) || grid[nr][nc]===WALL) continue
+        if(!inb(nr,nc) || grid[nr][nc]===WALL || cutsCorner(grid,cur.r,cur.c,dr,dc)) continue
         const cost = w(nr,nc)
         if(!Number.isFinite(cost)) continue
         const nd = cur.d + cost

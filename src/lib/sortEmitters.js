@@ -4,13 +4,17 @@ function bubbleSteps(a0) {
   let comparisons = 0, writes = 0
   const n = a.length
   for (let i = 0; i < n - 1; i++) {
+    let swapped = false
     for (let j = 0; j < n - 1 - i; j++) {
       comparisons++; steps.push({ type: 'compare', i: j, j: j + 1 })
       if (a[j] > a[j + 1]) {
         ;[a[j], a[j + 1]] = [a[j + 1], a[j]]
         writes++; steps.push({ type: 'swap', i: j, j: j + 1 })
+        swapped = true
       }
     }
+    // A pass with no swap means the list is sorted: this is what makes the best case O(n)
+    if (!swapped) break
   }
   for (let i = 0; i < n; i++) steps.push({ type: 'placed', i })
   return { steps, metrics: { comparisons, writes } }
@@ -308,20 +312,29 @@ function timSteps(a0) {
     while (j < R.length) { pushOverwrite(k++, R[j++]); }
   }
 
+  // Runs can be longer than RUN (a long natural run is kept whole), so remember where each one ends
+  let runs = [];
   for (let i = 0; i < n;) {
-    let runEnd = countRun(i);           
+    let runEnd = countRun(i);
     const runLen = runEnd - i;
     const targetEnd = Math.min(i + Math.max(RUN, runLen) - 1, n - 1);
     insertionRun(i, targetEnd);
+    runs.push([i, targetEnd]);
     i = targetEnd + 1;
   }
 
-  for (let size = RUN; size < n; size <<= 1) {
-    for (let lo = 0; lo < n; lo += (size << 1)) {
-      const mid = Math.min(lo + size - 1, n - 1);
-      const hi = Math.min(lo + (size << 1) - 1, n - 1);
-      if (mid < hi) merge(lo, mid, hi);
+  // Merge neighbouring runs, pass after pass, until one sorted run is left
+  while (runs.length > 1) {
+    const next = [];
+    for (let k = 0; k < runs.length; k += 2) {
+      if (k + 1 < runs.length) {
+        merge(runs[k][0], runs[k][1], runs[k + 1][1]);
+        next.push([runs[k][0], runs[k + 1][1]]);
+      } else {
+        next.push(runs[k]);
+      }
     }
+    runs = next;
   }
 
   for (let i = 0; i < n; i++) steps.push({ type: 'placed', i });

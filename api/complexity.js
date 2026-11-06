@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     }
 
     const apiKey = process.env.OPENROUTER_API_KEY3;
-    if (!apiKey) return res.status(500).json({ error: 'Missing OPENROUTER_API_KEY on server.' });
+    if (!apiKey) return res.status(500).json({ error: 'Missing OPENROUTER_API_KEY3 on server.' });
 
     // Free models on OpenRouter come and go. So there are three, and OpenRouter takes the
     // first one that is still there. OPENROUTER_MODEL in the environment puts one in front.
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       "9) Summary: ≤ 220 words explaining what it does, how it works at a high level, and why the stated complexities hold.",
       '10) Unknown/NA fields must be "" or [].',
       "Return strictly valid JSON. No Markdown, no commentary."
-    ].join('\\n');
+    ].join('\n');
 
 
     const userBlock = `Language: ${language || 'auto-detect'}\nCode:\n${code.slice(0, 60000)}`;
